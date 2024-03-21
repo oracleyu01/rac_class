@@ -66,7 +66,7 @@
   
   &nbsp;
  
-### 오라클을 처음부터 배우시는 분들을 위해 SQL과 SQL튜닝 강의를 소개합니다.
+### ⚡ 오라클을 처음부터 배우시는 분들을 위해 SQL과 SQL튜닝 강의를 소개합니다.
 
 
 - **SQL 강의(국비지원)**:  🖥️ [영상](https://www.e-itwill.com/course/course_view.jsp?id=121&ch=course&cid=&s_style=gallery&scid=&s_field=&s_keyword=)  
