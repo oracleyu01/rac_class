@@ -5,8 +5,8 @@
 
   1. shutdown  normal
   2. shutdown  transactional  -->  누군가 DML 작업을 하고 있으면 인스턴스가 
-                                            안내려가고 commit 이나 rollback 을 해서
-                                            transaction 을 종료해야 내려갑니다. 
+                                   안내려가고 commit 이나 rollback 을 해서
+                                  transaction 을 종료해야 내려갑니다. 
   3. shutdown  immediate
   4. shutdown  abort
 
@@ -17,8 +17,6 @@
  
  다른 인스턴스에 DML 작업이 끝날 때까지 기다리지 않고 
  내가 내리려는 인스턴스에 DML 작업이 없으면 그냥 인스턴스를 내리겠다.
-
-
 
  shutdown  transactional    
 
@@ -54,8 +52,8 @@ SCOTT>  @demobld.sql
 #6. 다시 1번 인스턴스를 올립니다. 
 
 문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로
-         변경하고 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
-          확인하시오 !
+        변경하고 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
+        확인하시오 !
 
 
 문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~
