@@ -59,6 +59,9 @@
 - **20. RAC 환경에서 특정 세션을 Kill 시키는 방법**: 🗒️[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C20.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%ED%8A%B9%EC%A0%95%20%EC%84%B8%EC%85%98%EC%9D%84%20Kill%20%EC%8B%9C%ED%82%A4%EB%8A%94%20%EB%B0%A9%EB%B2%95.txt)
   
 - **21. RAC 환경 관리 파라미터중 가장 중요한 cluster_database 파라미터 이해하기**: 🗒️[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C21.%20%20RAC%20%ED%99%98%EA%B2%BD%20%EA%B4%80%EB%A6%AC%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%A4%91%20%EA%B0%80%EC%9E%A5%20%EC%A4%91%EC%9A%94%ED%95%9C%20cluster_database%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0.txt)
+
+  &nbsp;
+  &nbsp;
  
 ### 보다 풍성한 데이터 분석을 위해서 SQL과 SQL튜닝 강의를 소개합니다.
 
