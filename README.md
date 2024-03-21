@@ -61,6 +61,9 @@
 - **21. RAC 환경 관리 파라미터중 가장 중요한 cluster_database 파라미터 이해하기**: 🗒️[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C21.%20%20RAC%20%ED%99%98%EA%B2%BD%20%EA%B4%80%EB%A6%AC%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%A4%91%20%EA%B0%80%EC%9E%A5%20%EC%A4%91%EC%9A%94%ED%95%9C%20cluster_database%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0.txt)
 
   &nbsp;
+  
+  &nbsp;
+  
   &nbsp;
  
 ### 보다 풍성한 데이터 분석을 위해서 SQL과 SQL튜닝 강의를 소개합니다.
