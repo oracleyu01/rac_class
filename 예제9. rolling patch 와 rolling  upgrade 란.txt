@@ -1,0 +1,16 @@
+
+▣ 예제9. rolling patch 와 rolling  upgrade 란 ?
+
+ patch 란 ?   오라클 새로운 릴리즈 제품이 출시되고 나서 고객들이 사용하다가
+                발견한 버그(bug) 들을 오라클사에서 fix 프로그램을 만들어서
+                배포를 합니다.  배포된 프로그램으로 적용하는 것을 패치라고 합니다.
+       
+ upgrde 란 ?   오라클 버젼을 올리는것입니다. 
+
+ patch 와 upgrade 를 할때 인스턴스를 내렸다 올려야합니다. 
+ 다운 타임이 발생하게 됩니다. 그럼 서비스가 안됩니다. 
+ 
+ RAC 를 사용하면 rolling patch 와 rolling upgrade 를 할 수 있어서 다운타임이
+ 발생하지 않습니다.
+
+그림설명 : https://cafe.daum.net/oracleoracle/SoJX/36

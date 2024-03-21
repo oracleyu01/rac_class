@@ -1,0 +1,54 @@
+
+▣ 예제11.  RAC 환경에서 리두 로그 파일 관리 방법 
+
+ 설명그림:  https://cafe.daum.net/oracleoracle/SoJX/38
+
+■ 실습
+
+#1. 1번 인스턴스에서 thread 번호를 확인합니다.
+#2. 2번 인스턴스에서 thread 번호를 확인합니다.
+#3. 1번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+#4. 1번 인스턴스에서 로그 스위치를 일으킵니다.
+#5. 1번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+#6. 2번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+#7. 2번 인스턴스에서 로그 스위치를 일으킵니다.
+#8. 2번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+
+구현:
+#1. 1번 인스턴스에서 thread 번호를 확인합니다.
+SQL#1> show  parameter  thread
+
+#2. 2번 인스턴스에서 thread 번호를 확인합니다.
+SQL#2> show parameter  thread
+
+#3. 1번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+
+SQL#1> select  group#, status, sequence#, thread#
+              from v$log;
+
+※ thread 번호는 rac 환경에서 어느 인스턴스의 리두 로그 그룹인지를 구분해주기 위한 번호 
+
+#4. 1번 인스턴스에서 로그 스위치를 일으킵니다.
+
+SQL#1> alter  system  switch  logfile; 
+
+#5. 1번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+
+SQL#1> select  group#, status, sequence#, thread#
+              from v$log;
+
+#6. 2번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+
+SQL#2> select group#, status, sequence#, thread#
+              from v$log;
+
+#7. 2번 인스턴스에서 로그 스위치를 일으킵니다.
+
+SQL#2> alter  system  switch  logfile;
+
+#8. 2번 인스턴스에서 리두로그 그룹과 상태와 thread 번호를 확인합니다.
+
+SQL#2> select group#, status, sequence#, thread#
+              from v$log;
+
+RAC 환경에서는 리두 로그 파일은 각각 별개의 group 에 write 를 합니다. 

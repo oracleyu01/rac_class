@@ -1,0 +1,45 @@
+
+▣ 예제18.  반드시 양쪽 인스턴간에 파라미터 값을 다르게 해줘야하는 파라미터 
+
+대표적인 파라미터 !
+
+1. thread       :   어느 인스턴스의 리두 로그 그룹인지를 나타내는 파라미터
+2. instance_number  :  인스턴스 번호
+3. instance_name     :  인스턴스 이름
+4. undo_tablespace  :  어느 인스턴스의 undo data 를 저장할 undo_tablespace 인지를 
+                             나타내는 파라미터 
+
+■ 실습
+#1.  다음과 같이 undo tablespace 를 2개를 생성합니다. 
+
+ create  undo  tablespace   undotbs3  datafile   '+data'  size 20m;
+ create  undo  tablespace   undotbs4  datafile   '+data'  size 20m;
+
+#2. 1번 인스턴스는 undotbs3 을 쓰게 하고 2번 인스턴스는 undotbs4 를 쓰게 합니다.
+
+SQL#1> alter  system  set  undo_tablespace = 'undotbs3'  scope=both  sid='racdb1';
+SQL#1> show parameter undo_tablespace
+
+SQL#2> alter  system  set  undo_tablespace = 'undotbs4'  scope=both  sid='racdb2';
+SQL#2> show parameter undo_tablespace
+
+문제1. 다음과 같이 장애를 일으키고 해결하시오 !
+
+SQL#1> alter  system  set  undo_tablespace = 'undotbs1'  scope=spfile  sid='racdb1';
+
+SQL#2> alter  system  set  undo_tablespace = 'undotbs1'  scope=spfile sid='racdb2';
+
+SQL#1> startup force
+SQL#2> startup force 
+
+문제2.  PL/SQL 의 커서의 갯수를 충분히 열수 있도록 open_cursors 라는 파라미터를
+          기존의 2배로 늘리시오 !
+
+ select  inst_id, name, value, sid, ordinal
+    from gv$spparameter
+   where  name='open_cursors'; 
+
+alter  system  set  open_cursors=600  scope=spfile  sid='*';
+
+SQL#1> startup  force
+SQL#2> startup  force

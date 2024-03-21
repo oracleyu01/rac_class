@@ -1,0 +1,29 @@
+▣ 예제3. RAC 를 운영할 때 필요한 IP 3가지 ?
+
+ 1. public  ip  :  외부의 클라이언트들이 노드로 접속할 때 사용하는 ip
+ 2. private ip  :  노드간의 통신을 하기위해서 사용하는 ip
+ 3. virtual  ip   : failover 를 지원하기위해 사용하는 ip
+                       ↓
+   내가 접속한 노드가 죽었을때 살아있는 다른 노드로 자동으로 접속되는 기능
+
+■ 실습
+
+# 1. rac 의 3가지 아이피 주소를 확인하빈다. 
+
+$ cat  /etc/hosts 
+
+### Public
+10.0.2.15  rac1
+10.0.2.16  rac2
+
+### Private
+192.168.56.111  rac1-priv
+192.168.56.112  rac2-priv
+
+### Virtual
+10.0.2.111  rac1-vip
+10.0.2.112  rac2-vip
+
+### SCAN
+10.0.2.120  rac-scan
+

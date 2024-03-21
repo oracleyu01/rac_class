@@ -1,0 +1,36 @@
+
+▣ 예제20.  RAC 환경에서 특정 세션을 Kill 시키는 방법 (p4-35)
+
+ RAC 환경에서는 세션을 kill 시킬때 다음과 같이 몇 번 인스턴스의 유져를
+ kill 시키는 지를 명시해줘야 합니다.
+
+ 예: alter  system  kill  session  '32,21,@2'  immediate; 
+
+■ 실습 
+
+#1.  1번 인스턴스에 scott 유져로 접속해서 smith 유져의 월급을 2900 으로 수정
+#2.  2번 인스턴스에 scott 유져로 접속해서 smith 유져의 월급을 0 로 변경
+#3.  위의 상황에서 누가 LOCK Holder 이고 누가 LOCK Waiter 인지 확인하시오
+
+SQL#1> select  inst_id, sid, lmode, request
+             from  gv$lock
+             where  type  in ('TX', 'TM');
+
+SQL#1>  select  sid, serial#, inst_id
+              from  gv$session
+              where sid=126;
+
+SQL#1>  alter  system  kill  session  '126,9,@1'  immediate; 
+
+
+문제1. lock waiter 도 죽이세요 ~
+
+ select  sid, serial#, inst_id
+    from  gv$session 
+   where  sid=128;
+
+alter  system  kill session  '128,9,@2'   immediate ;
+
+RAC 환경에서 특정 세션 kill 시키는 명령어 
+
+문법 :   alter  system  kill  session 'sid번호,serial번호,@인스턴스 번호'  immediate ;

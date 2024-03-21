@@ -1,0 +1,17 @@
+
+▣ 예제6.  GRD 가 관리하는 서비스 2가지가 무엇인가 ? 
+
+ 1. GSC ( Global  Cache  Service )   --> 노드간의 데이터를 전송하는 서비스
+
+   데이터를 전송하는 데몬 프로세서 :  LMS 
+
+ 2. GES ( Global   Enqueue Service) --> 노드간에 발생하는 lock 을 관리하는 서비스
+
+   노드간 락(enqueue) 을 담당하는 데몬 프로세서 : LMON
+
+
+ RAC 장점 ?   1.  고가용성
+                  2.  확장성 
+
+ 또 다른 장점 2가지 ?  1.  Scale up
+                             2.  Speed up 
