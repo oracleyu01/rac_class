@@ -1,0 +1,53 @@
+
+▣ 예제20.  RAC 데이터 베이스 정지 (P 4-34)
+
+  지금 중요한 상황이 발생해서 DB 에 그 누구도 접속하지 못하게 막고 싶을 때가 있습니다.
+  
+1. RAC 가 아닌 standard  alone  일때 
+
+ select logins  from  v$instance; 
+
+LOGINS
+----------
+ALLOWED  <----  누구든지 접속이 가능한 상태 
+
+ alter system  enable  restricted  session;  
+
+ select logins  from  v$instance; 
+
+LOGINS
+----------
+RESTRICTED  <-- dba 권한이 있는 유져 외에는 접속이 불가능한 상태가 된것 입니다.
+
+ create  user  smith  
+   identifed  by  tiger;
+
+  grant  connect  to smith; 
+
+SQL#1>   connect  smith/tiger 
+
+  ORA-01035: ORACLE only available to users with RESTRICTED SESSION privilege
+
+SQL#2> connect smith/tiger
+
+1번 노드에는 접속이 안되는데 2번 노드는 접속이 됩니다. 
+rac 환경에서는 다른 방법으로 접속이 안되게 해줘야합니다.
+
+SQL#1> connect  / as sysdba
+SQL#1> alter  system  disable   restricted  session;
+SQL#1> select logins  from v$instance; 
+
+#2. RAC 환경일 때
+
+1번 노드에서 sys 유져에서 아래의 작업을 합니다. 
+
+SQL#1> alter  system  quiesce  restricted ;
+
+새로운 터미널 창을 열고 1번노드에서 smith 유져로 접속시도
+새로운 터미널 창을 열고 2번노드에서 smith 유져로 접속시도
+
+둘다 접속 안됩니다.
+
+그럼 다시 풀어주겠습니다.
+
+SQL#1> alter  system  unquiesce; 
