@@ -2,8 +2,8 @@
 ▣ 예제10.  voting  disk 와 ocr file 이 무엇인지 ?  
 
   1. voting disk 란 ?  심장박동 주기 정보가 들어있는 파일
-                           split brain 현상을 방지 하기 위한 정보가 들어있는 파일 
+                       split brain 현상을 방지 하기 위한 정보가 들어있는 파일 
 
   2. ocr  file  이란 ?  rac 에 응용 프로그램들의 클러스터 정보가 들어있는 파일
-                                        ↓
-                     instance, listener, vip, asm, service  등
+                                      
+  응용 프로그램들: instance, listener, vip, asm, service  등
