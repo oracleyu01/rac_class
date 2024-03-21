@@ -3,18 +3,17 @@
 
 cluster_database 는 양쪽 다 똑같이 같은 값으로 셋팅되어져 있어야하며
 이 값이 true 면 모든 인스턴스가 cluster 서비스를 지원받으면서 운영되게 하겠다
-라는 뜻입니다.  그런데 이 값이 false 면 cluster 로 사용하지 않고 그냥 standard alone 
-으로 쓰겠다는 뜻입니다.  
+라는 뜻입니다.  그런데 이 값이 false 면 cluster 로 사용하지 않고 그냥 standard alone 으로 쓰겠다는 뜻입니다.  
 
 이 값은 항상 true 인데 false 로 해야하는 경우가 있습니다. 
+
 다음과 같은 경우에 반드시 false 로 셋팅하고 작업해야합니다. 
 
  " control file 을 재생성하는 경우 "
 
  dba 나 db 엔지니어가 controlfile 을 재생성하는 경우는 언제인가 ?
 
- db 설치이후에 반드시 control file 안에 maxdatafiles 라는 파라미터값을 크게 변경해주고
- 재생성해야합니다.
+ db 설치이후에 반드시 control file 안에 maxdatafiles 라는 파라미터값을 크게 변경해주고 재생성해야합니다.
 
  maxdatafiles 는 database 에서 생성할 수 있는 data file 의 총갯수 입니다.
 
@@ -79,13 +78,12 @@ RECORDS_TOTAL
          2000
 
 
-오늘의 마지막 문제. 아래의 두개의 파라미터 값을 다음과 같이 설정하시오 !
+ 문제. 아래의 두개의 파라미터 값을 다음과 같이 설정하시오 !
 
  1. 오라클 파라미터 : db_files 를 2500
  2. control file의 maxdatafiles 파라미터를 2500 으로 변경하고 
 
-변경한 내용을 캡쳐해서 rac 이수자 평가 제출물 1번으로 캡쳐해놓고 
-답글올리시오 !
+변경한 내용을 캡쳐해서 rac 이수자 평가 제출물 1번으로 캡쳐해놓고 답글을 올리시오 !
 
  SELECT records_total
    FROM v$controlfile_record_section
