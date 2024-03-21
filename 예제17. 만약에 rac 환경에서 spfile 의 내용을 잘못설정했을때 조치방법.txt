@@ -6,11 +6,13 @@
 #1. 양쪽 인스턴스에 셋팅된 db_files 파라미터 값을 조회하시오 !
 
 - 현재 인스턴스에 셋팅된 값 확인 
+
 SQL#1> select  inst_id, name, value
              from gv$parameter
              where name='db_files';
 
 - spfile 안의 내용을 확인
+
 SQL#1> select  inst_id, name, value, sid
              from gv$spparameter
              where name='db_files';
@@ -20,6 +22,7 @@ SQL#1> select  inst_id, name, value, sid
 SQL#1> alter   system  set  db_files=3000  scope=spfile  sid='racdb1';
 
 - spfile 안의 내용을 확인
+
 SQL#1> select  inst_id, name, value, sid
              from gv$spparameter
              where name='db_files';
