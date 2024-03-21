@@ -4,7 +4,7 @@
  p4-26 그림
 
 그림 설명 :  1번 노드, 2번 노드 둘다  동일한 spfile 을 바라봐야합니다. 
-                1번 노드 따로 2번 노드 따로 두고 관리하게 되면 문제가 생깁니다. 
+             1번 노드 따로 2번 노드 따로 두고 관리하게 되면 문제가 생깁니다. 
 
 ■ 실습
 #1. 1번 노드와 2번 노드의 인스턴스가 동일한 spfile 을 사용하고 있는지 확인하기
@@ -91,21 +91,21 @@ SQL#1> select  inst_id, name, value
    다르게 잡아줘야하는 파라미터 인가 ?
 
  select  inst_id, name, value, ordinal     <---- ordinal 이 1은 양쪽다 똑같이 셋팅
-    from gv$spparameter                               0 은 양쪽다 다르게 셋팅
+    from gv$spparameter                                     0 은 양쪽다 다르게 셋팅
     where name='파라미터 이름'; 
 
  양쪽다 똑같이 셋팅하려면 ?   아래 처럼 sid='*' 을 써야합니다. 
 
 SQL#1> alter  system   set   db_files=2000  scope=spfile   sid='*';
 
- 다르게 한다면 ?  
+다르게 한다면 ?  
  
 SQL#1> alter  system   set  undo_tablespace='undotbs1'  scope=spfile   sid='racdb1';
 SQL#2> alter  system   set  undo_tablespace='undotbs2'  scope=spfile   sid='racdb2';
 
 점심시간 문제.  현재 db 에 띄울 수 있는 프로세서의 갯수가 150개 밖에 안됩니다.
-                    이 갯수를 300개로 늘리세요. 파라미터는 processes 입니다.
-                     양쪽 노드 둘다 300개로 늘리세요 ~
+                이 갯수를 300개로 늘리세요. 파라미터는 processes 입니다.
+                양쪽 노드 둘다 300개로 늘리세요 ~
 
 SQL#1> select  inst_id, name, value 
              from gv$spparameter
