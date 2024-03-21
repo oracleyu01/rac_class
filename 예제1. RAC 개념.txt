@@ -1,14 +1,12 @@
 ▣ 예제1. RAC 개념 
 
   Real  Application  Cluster 약자  
+   ↓        ↓           ↓
   진짜  응용프로그램  집단
                ↓
       database, instance, listener, ASM, service, vip 등
 
-이러한 응용 프로그램들이 마치 하나의 서버에 있는것처럼 보이게하는
-오라클 아키텍쳐중에 하나입니다. 
-
-그림 캡쳐 pI-7 
+이러한 응용 프로그램들이 마치 하나의 서버에 있는것처럼 보이게하는 오라클 아키텍쳐중에 하나입니다. 
 
 그림 설명: https://cafe.daum.net/oracleoracle/SoJX/4
 
