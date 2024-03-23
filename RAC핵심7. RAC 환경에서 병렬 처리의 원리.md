@@ -52,7 +52,8 @@ alter session set parallel_instance_group='seoul';
 select /*+ parallel(e1) full(e1) */ count(*)
 from emp e1;
 
-이 설정을 통해 RAC 환경에서 병렬 처리의 성능을 최적화할 수 있습니다.
+이 설정을 통해 RAC 환경에서 병렬 처리의 성능을 최적화할 수 있습니다.  
+
 &nbsp;
 &nbsp;
 
