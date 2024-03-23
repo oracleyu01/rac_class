@@ -11,11 +11,11 @@
 Oracle Real Application Clusters(RAC)를 설치하기 위해서는 오라클 클러스터 소프트웨어가 필요합니다. 
 
 이는 HP나 IBM과 같은 다른 벤더들이 제공하는 클러스터 소프트웨어와 구별되며, 오라클 RAC를 구성하고 사용하기 위한 전제 조건입니다.
-  &nbsp;
+  &nbsp;  
+  
   
 ### 2️⃣ RAC 설치 순서?
   &nbsp;
-  
 **1.Grid 인프라 설치**: 클러스터와 Oracle ASM(Automatic Storage Management) 구성이 포함됩니다. 
 
 Grid 인프라는 RAC 시스템의 기반을 제공하며, 클러스터 리소스 관리와 스토리지 관리를 담당합니다.
