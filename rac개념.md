@@ -1,7 +1,8 @@
 ## ⭐⭐ RAC핵심1. RAC 란 무엇인가?  ⭐⭐
 
 
-### 1️⃣ Oracle Real Application Clusters (RAC) ?
+### 1️⃣ Oracle Real Application Clusters (RAC) ?  
+
 
 다수의 데이터베이스 서버(노드)가 하나의 데이터베이스를 공유하면서 운영될 수 있게 하는  
 
