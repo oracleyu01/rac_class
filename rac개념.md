@@ -10,7 +10,9 @@
 
 RAC는 데이터베이스, 인스턴스, 리스너, Automatic Storage Management(ASM), 서비스, 가상 IP(VIP) 등을 포함하여,  
 
-여러 응용 프로그램들이 마치 단일 서버에서 운영되는 것처럼 보이게 합니다.
+여러 응용 프로그램들이 마치 단일 서버에서 운영되는 것처럼 보이게 합니다.  
+
+&nbsp;
 
 ### 2️⃣ Oracle Real Application Clusters(RAC)의 장점 2가지:
 
