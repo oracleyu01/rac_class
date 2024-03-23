@@ -1,7 +1,7 @@
 ### ⭐⭐ RAC핵심3. RAC 를 운영할 때 필요한 IP 3가지 ? ⭐⭐  
 &nbsp;
 
-## 1️⃣ Oracle RAC(Real Application Clusters)를 운영할 때 필수적으로 구성해야 하는 IP 주소  
+## 1️⃣ Oracle RAC 를 운영할 때 필수적으로 구성해야 하는 IP 주소  
 
 <img src="https://github.com/oracleyu01/rac_class/blob/main/%EC%95%84%EC%9D%B4%ED%94%BC3%EA%B0%80%EC%A7%80.png" width="500" height="400">
 
@@ -69,4 +69,4 @@ SCAN IP는 클라이언트가 RAC 데이터베이스에 접속할 때 사용하�
 &nbsp;
 &nbsp;
 
-😊 RAC 환경에서 필수로 사용되는 4가지 IP주소의 용도를 기억해주세요.
+😊 RAC 환경에서 필수로 사용되는 3가지 IP주소의 용도를 기억해주세요.
