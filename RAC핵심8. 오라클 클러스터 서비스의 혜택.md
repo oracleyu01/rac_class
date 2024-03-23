@@ -39,8 +39,9 @@ Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다�
 
 <img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
 
-`인라인 코드`
+`tnsnames.ora 파일의 내용`
 
+'''sql
 $ cd $ORACLE_HOME/network/admin
 $ vi tnsnames.ora
 
