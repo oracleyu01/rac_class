@@ -20,7 +20,7 @@
   
 - **4. RAC 의 또 다른 장점인 speedup 과 scaleup**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%ED%95%B5%EC%8B%AC4.%20RAC%EC%9D%98%20%EC%B6%94%EA%B0%80%20%EC%9E%A5%EC%A0%90.md)
   
-- **5. RAC 환경에서 일관된 data 를 볼 수 있는 기술은 무엇인가 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C5.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%9D%BC%EA%B4%80%EB%90%9C%20data%20%EB%A5%BC%20%EB%B3%BC%20%EC%88%98%20%EC%9E%88%EB%8A%94%20%EA%B8%B0%EC%88%A0%EC%9D%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.txt)
+- **5. RAC 환경에서 일관된 data 를 볼 수 있는 기술은 무엇인가 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC5.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%9D%BC%EA%B4%80%EC%84%B1%EC%9D%84%20%EC%9C%A0%EC%A7%80%ED%95%98%EB%8A%94%20%EA%B8%B0%EC%88%A0.md)
   
 - **6. GRD 가 관리하는 서비스 2가지가 무엇인가 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C6.%20%20GRD%20%EA%B0%80%20%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94%20%EC%84%9C%EB%B9%84%EC%8A%A4%202%EA%B0%80%EC%A7%80%EA%B0%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.txt)
   
