@@ -11,7 +11,7 @@
 ## 수업 자료( ☀️ 2024년 3월 23일 updated)
 
 
-- **1. RAC 개념**:  📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C1.%20RAC%20%EA%B0%9C%EB%85%90.txt)
+- **1. RAC 개념**:  📄[노트](https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B0%9C%EB%85%90.md)
   &nbsp;
   
 - **2. 클러스터(cluster) 가 무엇인가 ?**: 📄 [노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C2.%20%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0(cluster)%20%EA%B0%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.txt)
