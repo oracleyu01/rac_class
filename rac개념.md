@@ -1,6 +1,6 @@
 ## ⭐⭐ RAC핵심1. RAC 란 무엇인가?  ⭐⭐
 
-<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="800" height="500">
+<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
   
 ### 1️⃣ Oracle Real Application Clusters (RAC) ?  
 
