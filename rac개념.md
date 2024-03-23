@@ -1,5 +1,5 @@
 ## ⭐⭐ RAC핵심1. RAC 란 무엇인가?  ⭐⭐
-
+  &nbsp;
   
 ### 1️⃣ Oracle Real Application Clusters (RAC) ?  
   &nbsp;
