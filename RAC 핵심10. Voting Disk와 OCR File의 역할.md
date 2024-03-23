@@ -1,7 +1,6 @@
 ## ⭐⭐ RAC 핵심10. Voting Disk와 OCR File의 역할 ⭐⭐
 
-Oracle RAC 환경에서는 두 가지 중요한 파일, Voting Disk와 OCR(Oracle Cluster Registry) File이   
-핵심적인 역할을 합니다.
+Oracle RAC 환경에서는 두 가지 중요한 파일, Voting Disk와 OCR(Oracle Cluster Registry) File이 핵심적인 역할을 합니다.
 
 ### 1️⃣ Voting Disk ?
 ```mermaid
