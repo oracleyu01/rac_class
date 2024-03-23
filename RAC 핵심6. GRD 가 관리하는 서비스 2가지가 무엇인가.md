@@ -12,8 +12,8 @@
     
 
    노드간 락(enqueue) 을 담당하는 데몬 프로세서 : LMON  
-
-     &nbsp;
+   
+  &nbsp;
   &nbsp;
 
 
