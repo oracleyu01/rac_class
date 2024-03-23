@@ -10,7 +10,7 @@ Oracle RAC(Real Application Clusters)의 "rolling patch"와 "rolling upgrade"는
 
 ## 1️⃣ Rolling Patch ?
 
-Rolling patch는 보안 패치, 버그 수정, 소프트웨어 개선 사항 등을 포함할 수 있는 패치를 Oracle RAC 환경의 노드에 
+Rolling patch는 보안 패치, 버그 수정, 소프트웨어 개선 사항 등을 포함할 수 있는 패치를 Oracle RAC 환경의 노드에   
 순차적으로 적용하는 과정입니다. 
 
 이 과정에서 한 노드가 패치를 적용받고 있을 때, 다른 노드들은 계속해서 사용자의 데이터베이스 요청을 처리할 수 있습니다. 
@@ -32,7 +32,7 @@ Rolling upgrade 과정은 일반적으로 더 복잡하며, 패치 적용보다 
 
 두 방법 모두 Oracle RAC 환경에서 고가용성을 유지하면서 소프트웨어 유지 보수를 가능하게 합니다. 
 
-주요 차이점은 rolling patch가 일반적으로 더 작은 변경사항을 적용하는 반면, rolling upgrade는 전체 소프트웨어 버전을 
+주요 차이점은 rolling patch가 일반적으로 더 작은 변경사항을 적용하는 반면, rolling upgrade는 전체 소프트웨어 버전을   
 새로운 버전으로 업그레이드하는 더 큰 작업입니다.
 
 Oracle의 공식 문서와 가이드라인은 이러한 과정을 계획하고 수행하는 데 있어 중요한 정보를 제공합니다.
