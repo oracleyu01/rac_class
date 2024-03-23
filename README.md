@@ -4,7 +4,7 @@
 
 초보자도 쉽게 배울 수 있도록 오라클 RAC 수업 내용을 정리하였습니다.
 
-<img src="https://github.com/oracleyu01/rac_class/blob/main/001.png?raw=true" width="800" height="500">
+<img src="https://github.com/oracleyu01/rac_class/blob/main/001.png?raw=true" width="700" height="400">
 
 &nbsp;
 
