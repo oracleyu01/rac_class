@@ -41,8 +41,8 @@ Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다�
 `tnsnames.ora 파일의 내용`
 
 ```
-$ cd 
-vi tnsnames.ora
+$ cd $ORACLE_HOME/network/admin
+$ vi tnsnames.ora
 
 racdb_taf=
  (DESCRIPTION =
