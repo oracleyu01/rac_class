@@ -19,6 +19,7 @@ RAC는 데이터베이스, 인스턴스, 리스너, Automatic Storage Management
 ### 2️⃣ Oracle Real Application Clusters(RAC)의 장점 2가지:
 
   &nbsp;
+  <img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
   
  ⚡ **고가용성(High Availability)**:  RAC는 24시간 연속적인 서비스 제공을 가능하게 합니다. 
 
