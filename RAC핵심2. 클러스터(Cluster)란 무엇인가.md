@@ -1,6 +1,6 @@
 ## ⭐⭐ RAC핵심2. 클러스터(Cluster)란 무엇인가? ⭐⭐
   &nbsp;
-
+<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
 ### 1️⃣ 클러스터란 ? 
   &nbsp;  
   
