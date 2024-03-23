@@ -45,7 +45,19 @@ Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다�
 $ cd 
 vi tnsnames.ora
 
-racdb_taf= (DESCRIPTION = (ADDRESS_LIST= (LOAD_BALANCE=on) (FAILOVER=on) (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521)) ) (CONNECT_DATA = (SERVICE_NAME = racdb) (FAILOVER_MODE=(TYPE=select)(METHOD=basic)) ) )
+racdb_taf=
+ (DESCRIPTION =
+ (ADDRESS_LIST=
+ (LOAD_BALANCE=on)
+ (FAILOVER=on)
+ (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521))
+ (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521))
+)
+ (CONNECT_DATA =
+ (SERVICE_NAME = racdb)
+ (FAILOVER_MODE=(TYPE=select)(METHOD=basic))
+ )
+)
 ```
 
 
