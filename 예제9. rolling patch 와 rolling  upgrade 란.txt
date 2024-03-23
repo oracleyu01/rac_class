@@ -1,5 +1,5 @@
 
-😊 예제9. rolling patch 와 rolling  upgrade 란 ?
+😊 RAC 핵심9. rolling patch 와 rolling  upgrade 란 ?
 
 Oracle RAC(Real Application Clusters)의 "rolling patch"와 "rolling upgrade"는 데이터베이스 유지 관리 작업을 수행하는 동안 
 가용성을 최대화하는 기법입니다. 
@@ -14,6 +14,7 @@ Rolling patch는 보안 패치, 버그 수정, 소프트웨어 개선 사항 등
 이 과정에서 한 노드가 패치를 적용받고 있을 때, 다른 노드들은 계속해서 사용자의 데이터베이스 요청을 처리할 수 있습니다. 
 
 이는 시스템의 전체 가용성을 유지하면서 업데이트를 할 수 있게 해줍니다.
+
 
 2️⃣ Rolling Upgrade ?
 
