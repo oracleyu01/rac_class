@@ -36,17 +36,7 @@ Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다�
 
 ### 3️⃣ 실습: Failover가 가능하도록 네트워크 설정하는 방법
 
-        node1                     node2
-   +-----------+              +-----------+  
-   | instance1 |  <-------->  | instance2 |
-   +-----------+              +-----------+  
-             \                /
-              \              /
-               \            /
-                \          /
-               +------------+
-               |     DB     |
-               +------------+
+<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
 
 $ cd $ORACLE_HOME/network/admin
 $ vi tnsnames.ora
