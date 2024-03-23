@@ -11,7 +11,6 @@
 
 아래의 내용을 순서데로 하나 하나 차근 차근 보시면 됩니다.
 
-![This is an image]([https://example.com/image.jpg ](https://github.com/oracleyu01/rac_class/blob/main/001.png)"Image Title") 
 &nbsp;
 
 ## 수업 자료( ☀️ 2024년 3월 22일 updated)
