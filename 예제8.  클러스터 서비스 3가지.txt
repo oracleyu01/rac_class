@@ -80,8 +80,11 @@ racdb_taf=
 ⚡ RAC에서 사용하는 IP 주소 4가지:
 
 1.Public IP: 외부에서 접속할 때 사용합니다.
+
 2.Private IP: 노드 간 내부 통신에 사용합니다.
+
 3.Virtual IP: 노드 실패 시 다른 노드로의 failover에 사용합니다.
+
 4.SCAN IP: 클라이언트 연결 요청을 적절한 노드로 분산하는 SCAN 리스너의 IP 주소입니다.
 
 
