@@ -6,7 +6,7 @@
 
 예를 들어, 아래의 병렬 쿼리는 병렬 힌트를 이용하여 실행됩니다.
 
-select /*+ parallel(a,2) parallel(b,2) */ count(*)
+select /*+ parallel(a,2) parallel(b,2) */  *
 from dba_objects a, dba_objects b;
 
 <img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
