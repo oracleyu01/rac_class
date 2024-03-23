@@ -26,7 +26,7 @@
   
 - **7. RAC 환경에서 병렬 처리가 되는 원리**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%ED%95%B5%EC%8B%AC7.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%B3%91%EB%A0%AC%20%EC%B2%98%EB%A6%AC%EC%9D%98%20%EC%9B%90%EB%A6%AC.md)
   
-- **8. 클러스터 서비스 3가지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C8.%20%20%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%20%EC%84%9C%EB%B9%84%EC%8A%A4%203%EA%B0%80%EC%A7%80.txt)
+- **8. 클러스터 서비스 3가지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%ED%95%B5%EC%8B%AC8.%20%EC%98%A4%EB%9D%BC%ED%81%B4%20%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%20%EC%84%9C%EB%B9%84%EC%8A%A4%EC%9D%98%20%ED%98%9C%ED%83%9D.md)
   
 - **9. rolling patch 와 rolling  upgrade 란 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C9.%20rolling%20patch%20%EC%99%80%20rolling%20%20upgrade%20%EB%9E%80.txt)
   
