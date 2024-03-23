@@ -1,8 +1,8 @@
 ### ⭐⭐ RAC핵심3. RAC 를 운영할 때 필요한 IP 3가지 ? ⭐⭐  
 &nbsp;
 
-## 1️⃣ Oracle RAC(Real Application Clusters)를 운영할 때 필수적으로 구성해야 하는 IP 주소
-&nbsp;
+## 1️⃣ Oracle RAC(Real Application Clusters)를 운영할 때 필수적으로 구성해야 하는 IP 주소  
+
 
  **1️. Public IP:** 외부 클라이언트가 노드에 접속하기 위해 사용되는 IP 주소입니다.   
 
