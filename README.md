@@ -28,7 +28,7 @@
   
 - **8. 클러스터 서비스 3가지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%ED%95%B5%EC%8B%AC8.%20%EC%98%A4%EB%9D%BC%ED%81%B4%20%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%20%EC%84%9C%EB%B9%84%EC%8A%A4%EC%9D%98%20%ED%98%9C%ED%83%9D.md)
   
-- **9. rolling patch 와 rolling  upgrade 란 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C9.%20rolling%20patch%20%EC%99%80%20rolling%20%20upgrade%20%EB%9E%80.txt)
+- **9. rolling patch 와 rolling  upgrade 란 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC9.%20rolling%20patch%20%EC%99%80%20rolling%20%20upgrade%20%EB%9E%80.md)
   
 - **10. voting  disk 와 ocr file 이 무엇인지 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C10.%20%20voting%20%20disk%20%EC%99%80%20ocr%20file%20%EC%9D%B4%20%EB%AC%B4%EC%97%87%EC%9D%B8%EC%A7%80.txt)
   
