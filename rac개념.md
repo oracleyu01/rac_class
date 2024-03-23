@@ -2,6 +2,7 @@
 
 
 ### 1️⃣ Oracle Real Application Clusters (RAC) ?  
+
   &nbsp;
 
 다수의 데이터베이스 서버(노드)가 하나의 데이터베이스를 공유하면서 운영될 수 있게 하는  
@@ -16,6 +17,8 @@ RAC는 데이터베이스, 인스턴스, 리스너, Automatic Storage Management
 
 ### 2️⃣ Oracle Real Application Clusters(RAC)의 장점 2가지:
 
+  &nbsp;
+  
  ⚡ **고가용성(High Availability)**:  RAC는 24시간 연속적인 서비스 제공을 가능하게 합니다. 
 
 사용자가 접속한 서버 또는 인스턴스에 문제가 발생해도, 사용자는 다른 서버를 통해 서비스를 계속해서 받을 수 있습니다.  
