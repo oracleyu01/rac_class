@@ -1,3 +1,5 @@
+![RAC Image](https://github.com/oracleyu01/rac_class/blob/main/001.png?raw=true)
+
 # 오라클 RAC 
 
 안녕하세요, 여러분! 🌟
