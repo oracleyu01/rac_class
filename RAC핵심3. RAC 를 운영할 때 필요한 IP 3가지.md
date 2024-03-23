@@ -2,7 +2,8 @@
 &nbsp;
 
 ## 1️⃣ Oracle RAC(Real Application Clusters)를 운영할 때 필수적으로 구성해야 하는 IP 주소  
-<img src=https://github.com/oracleyu01/rac_class/blob/main/%EC%95%84%EC%9D%B4%ED%94%BC3%EA%B0%80%EC%A7%80.png" width="500" height="400">
+
+<img src="https://github.com/oracleyu01/rac_class/blob/main/%EC%95%84%EC%9D%B4%ED%94%BC3%EA%B0%80%EC%A7%80.png" width="500" height="400">
 
  **1️. Public IP:** 외부 클라이언트가 노드에 접속하기 위해 사용되는 IP 주소입니다.   
 
