@@ -24,7 +24,7 @@
   
 - **6. GRD 가 관리하는 서비스 2가지가 무엇인가 ?**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC6.%20GRD%20%EA%B0%80%20%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94%20%EC%84%9C%EB%B9%84%EC%8A%A4%202%EA%B0%80%EC%A7%80%EA%B0%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.md)
   
-- **7. RAC 환경에서 병렬 처리가 되는 원리**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C7.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%B3%91%EB%A0%AC%20%EC%B2%98%EB%A6%AC%EA%B0%80%20%EB%90%98%EB%8A%94%20%EC%9B%90%EB%A6%AC.txt)
+- **7. RAC 환경에서 병렬 처리가 되는 원리**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%ED%95%B5%EC%8B%AC7.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%B3%91%EB%A0%AC%20%EC%B2%98%EB%A6%AC%EC%9D%98%20%EC%9B%90%EB%A6%AC.md)
   
 - **8. 클러스터 서비스 3가지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C8.%20%20%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%20%EC%84%9C%EB%B9%84%EC%8A%A4%203%EA%B0%80%EC%A7%80.txt)
   
