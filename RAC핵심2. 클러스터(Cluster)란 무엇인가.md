@@ -1,6 +1,6 @@
 ## ⭐⭐ RAC핵심2. 클러스터(Cluster)란 무엇인가? ⭐⭐
   &nbsp;
-<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
+
 ### 1️⃣ 클러스터란 ? 
   &nbsp;  
   
@@ -12,7 +12,7 @@ Oracle Real Application Clusters(RAC)를 설치하기 위해서는 오라클 클
 
 이는 HP나 IBM과 같은 다른 벤더들이 제공하는 클러스터 소프트웨어와 구별되며, 오라클 RAC를 구성하고 사용하기 위한 전제 조건입니다.
   &nbsp;  
-  &nbsp;  
+<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
   
   
 ### 2️⃣ RAC 설치 순서?
