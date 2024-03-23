@@ -1,59 +1,68 @@
+⭐⭐ RAC핵심8. 오라클 클러스터 서비스의 혜택 ⭐⭐
 
-▣ 예제8.  클러스터 서비스 3가지 
+1️⃣ 오라클 클러스터 소프트웨어를 사용하면 다음과 같은 혜택을 누릴 수 있습니다:
 
- 오라클 클러스터 소프트웨어 덕분에 아래의 혜택을 누릴 수 있는것인데
+⚡ 고가용성: 연중무휴, 하루 24시간 데이터베이스에 접속할 수 있는 환경을 제공합니다.
 
-  1. 고가용성 (365일 24시간 DB 접속을 가능하게 해줍니다.)
-  2. 확장성 ( 사용자가 많아지면 노드를 계속 추가해 나갈 수 있습니다.)
+⚡ 확장성: 사용자 수 증가에 따라 필요에 맞게 노드를 추가하여 시스템을 확장할 수 있습니다.
 
- 서버를 증설하려면 ?  1년 넘는 프로젝트를 진행해야합니다. 
- 
- 그런데 처음부터 RAC 를 사용하게되면 노드만 새로 추가하면 됩니다.
+전통적인 서버 확장이 1년 이상의 프로젝트를 요구하는 반면, RAC를 사용하면 새로운 노드를 추가하는 것만으로 확장이 가능합니다.
 
- * 클러스터 서비스 3가지 ?
 
-  1. css (cluster synchronization service)
+2️⃣  클러스터 서비스 3가지 ?
 
-   노드간의 심장박동(heart beat) 를 보내서 서로 살아있는지 확인하는 역활 
+☀️ 1. CSS (Cluster Synchronization Services):
 
-     노드1  ♥ ---------------------------------->  노드2 
-              <----------------------------------- ♥
+노드 간의 '심장박동'을 통해 서로의 상태를 확인하는 역할을 합니다. 
 
-  심장박동이 상대편쪽에서 오지 않으면 그 노드를 죽은 노드로 간주하고 rebooting 시킵니다. 
+심장박동이 끊길 경우 해당 노드를 실패한 것으로 간주하고 재부팅을 시도합니다.
 
-  2. crs (cluster ready service)
 
-    고가용성 작업을 보장하기 위한 서비스(failover 를 지원하는 서비스) 
- 
-    failover 란 ?  내가 접속한 노드가 다운되었을때 자동으로 다른 살아있는 노드로 접속할 수 있게 해주는 기능
+노드1  ♥ ---------------------------------->  노드2 
+        <----------------------------------- ♥
 
-  3. evm (event management) 
+☀️ 2.CRS (Cluster Ready Services):
 
-   클러스터에 관련한 어떤 문제가 발생하면 그 문제를 남기고 기록하는 서비스
+고가용성 작업을 보장하는 서비스로, failover 기능을 지원합니다.
 
-■ 실습. failover 가 가능하도록 네트워크 설정하는 방법
+Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다른 노드로 재접속을 가능하게 하는 기능입니다.
+
+☀️ 3.EVM (Event Management):
+
+클러스터에 문제가 발생했을 때 해당 이벤트를 기록하는 서비스입니다.
+
+
+3️⃣ 실습: Failover가 가능하도록 네트워크 설정하는 방법
+
 
 $ cd $ORACLE_HOME/network/admin
-
 $ vi tnsnames.ora
 
 racdb_taf=
   (DESCRIPTION =
-    (address_list=
-     (load_balance=on)
-     (failover=on)
-    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521))
-    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521)) )
+    (ADDRESS_LIST=
+     (LOAD_BALANCE=on)
+     (FAILOVER=on)
+     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521))
+     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521))
+    )
     (CONNECT_DATA =
       (SERVICE_NAME = racdb)
-      (failover_mode=(type=select)(method=basic) )
+      (FAILOVER_MODE=(TYPE=select)(METHOD=basic))
     )
   )
 
-※ rac 에서 사용하는 ip 주소 4가지 ?
+이 설정을 통해 클라이언트 연결이 한 노드에서 실패할 경우 다른 노드로 자동으로 재접속이 이루어집니다.
 
- 1. public ip  ----> 외부에서 접속할 때 사용하는 ip 
- 2. private  ip  ----> 노드들 끼리 통신할 때 사용하는 ip
- 3. virtual ip  ---> 하나의 노드가 죽었을때 다른 노드로 failover 를 하기위해 필요한ip
- 4. scan ip ---> scan listener 의 ip 주소
+⚡ RAC에서 사용하는 IP 주소 4가지:
+
+1.Public IP: 외부에서 접속할 때 사용합니다.
+2.Private IP: 노드 간 내부 통신에 사용합니다.
+3.Virtual IP: 노드 실패 시 다른 노드로의 failover에 사용합니다.
+4.SCAN IP: 클라이언트 연결 요청을 적절한 노드로 분산하는 SCAN 리스너의 IP 주소입니다.
+
+
+
+
+
 
