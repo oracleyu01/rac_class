@@ -41,26 +41,13 @@ Failover란, 사용자가 연결된 노드가 다운될 경우 자동으로 다�
 
 `tnsnames.ora 파일의 내용`
 
-'''  
+```
+$ cd 
+vi tnsnames.ora
 
-$ cd $ORACLE_HOME/network/admin
-$ vi tnsnames.ora
+racdb_taf= (DESCRIPTION = (ADDRESS_LIST= (LOAD_BALANCE=on) (FAILOVER=on) (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521)) ) (CONNECT_DATA = (SERVICE_NAME = racdb) (FAILOVER_MODE=(TYPE=select)(METHOD=basic)) ) )
+```
 
-racdb_taf=
-  (DESCRIPTION =
-    (ADDRESS_LIST=
-     (LOAD_BALANCE=on)
-     (FAILOVER=on)
-     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.111)(PORT = 1521))
-     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.2.112)(PORT = 1521))
-    )
-    (CONNECT_DATA =
-      (SERVICE_NAME = racdb)
-      (FAILOVER_MODE=(TYPE=select)(METHOD=basic))
-    )
-  )
-
-'''
 
 이 설정을 통해 클라이언트 연결이 한 노드에서 실패할 경우 다른 노드로 자동으로 재접속이 이루어집니다.
 
