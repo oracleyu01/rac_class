@@ -59,8 +59,8 @@ SQL#1> show  parameter undo_tablespace
 SQL#2> show  parameter undo_tablespace  
 &nbsp;
 
-**문제1.  undotbs4 라는 undo tablespace 를 사이즈 50m 로 생성하고  
-      2번 인스턴스용 undo tablespace 로 지정하시오 !**
+**문제1.  undotbs4 라는 undo tablespace 를 사이즈 50m 로 생성하고 2번 인스턴스용 undo tablespace 로 지정하시오 !**  
+
 
 SQL#2>  create  undo  tablespace  undotbs4
               datafile   '+data'  size  50m;
