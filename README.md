@@ -42,7 +42,7 @@
   
 - **15. shutdown 명령어 외에 인스턴스를 올리고 내리는 명령어**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC15.%20srvctl%20%EB%AA%85%EB%A0%B9%EC%96%B4%20%EC%82%AC%EC%9A%A9%EB%B2%95.md)
   
-- **16. RAC 환경에서 초기화 파라미터 파일 관리하는 방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C16.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%B4%88%EA%B8%B0%ED%99%94%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20%ED%8C%8C%EC%9D%BC%20%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.txt)
+- **16. RAC 환경에서 초기화 파라미터 파일 관리하는 방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC16.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%B4%88%EA%B8%B0%ED%99%94%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20%ED%8C%8C%EC%9D%BC%20%EA%B4%80%EB%A6%AC.md)
   
 - **17. 만약에 rac 환경에서 spfile 의 내용을 잘못설정했을때 조치방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C17.%20%EB%A7%8C%EC%95%BD%EC%97%90%20rac%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20spfile%20%EC%9D%98%20%EB%82%B4%EC%9A%A9%EC%9D%84%20%EC%9E%98%EB%AA%BB%EC%84%A4%EC%A0%95%ED%96%88%EC%9D%84%EB%95%8C%20%EC%A1%B0%EC%B9%98%EB%B0%A9%EB%B2%95.txt)
   
