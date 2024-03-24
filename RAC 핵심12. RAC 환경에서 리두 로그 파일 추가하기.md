@@ -13,16 +13,23 @@ RAC에서는 각 인스턴스가 자신만의 thread를 가지며, 이 thread �
 
 **⚡실습** 
 
- standard alone 환경에서 리두 로그 그룹추가 명령어 
+ standard alone 환경에서 리두 로그 그룹추가 명령어는 다음과 같습니다.  
+   &nbsp;
+ 
 
  SQL> alter   database   add  logfile   group   5
-      '/u01/app/oracle/oradata/yys/redo05.log'  size  10m;
+      '/u01/app/oracle/oradata/yys/redo05.log'  size  10m;  
+        &nbsp;
+      
  
-스토리지가 ASM 이고 RAC 환경에서는 추가하는 명령어가 더 간단합니다.
+스토리지가 ASM 이고 RAC 환경에서는 추가하는 명령어가 더 간단합니다.  
+  &nbsp;
  
- SQL#1> alter  database  add   logfile  thread  1 group  5;
+ SQL#1> alter  database  add   logfile  thread  1 group  5;  
+   &nbsp;
 
- OMF 기능이 켜있는 상태에서 file 을 추가하면 default 사이즈가 100mb 입니다.
+ OMF 기능이 켜있는 상태에서 file 을 추가하면 default 사이즈가 100mb 입니다.  
+   &nbsp;
 
  SQL#1> alter system switch logfile;  
  
