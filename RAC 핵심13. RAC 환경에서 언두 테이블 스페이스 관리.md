@@ -33,7 +33,7 @@ SQL#1>  show  parameter  undo_tablespace
 SQL#2> show  parameter  undo_tablespace  
 &nbsp;
 
-**#3. undotbs3 이라는 undo tablespace 를 생성합니다. **
+**#3. undotbs3 이라는 undo tablespace 를 생성합니다.**
 
 SQL#1>  create  undo  tablespace  undotbs3  
                datafile   '+DATA'   size 50m;  
@@ -41,7 +41,7 @@ SQL#1>  create  undo  tablespace  undotbs3
 SQL#1> select tablespace_name, file_name from dba_data_files;  
 &nbsp;
 
-**#4. undotbs3 을 1번 인스턴스용 undo tablespace 로 지정합니다. **
+**#4. undotbs3 을 1번 인스턴스용 undo tablespace 로 지정합니다.**
 
 SQL#1> select instance_name from v$instance; 
 
