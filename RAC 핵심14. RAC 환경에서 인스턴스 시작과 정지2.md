@@ -10,7 +10,7 @@
   3. shutdown  immediate
   4. shutdown  abort
 
- **그런 데  rac 에만 있는 shutdown 옵션이 있습니다.**
+ **그런데  rac 에만 있는 shutdown 옵션이 있습니다.**
 
       shutdown  transactional  local 
 
@@ -38,12 +38,11 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
     SYS> connect  scott/tiger
     SCOTT>  @demobld.sql
 
-  &nbsp;  
-  &nbsp;  
   
 #1. 1번노드와 2번 노드에서 둘다 scott 유져로 접속합니다.
 
-#2. 1번 노드에서는 KING 의 월급을 9000으로 변경하고  2번 노드에서는 ALLEN 의 월급을 8000으로 변경합니다. 그리고 아직 둘다 COMMIT 하지 않습니다.
+#2. 1번 노드에서는 KING 의 월급을 9000으로 변경하고  2번 노드에서는 ALLEN 의 월급을 8000으로 변경합니다.  
+&nbsp;&nbsp;그리고 아직 둘다 COMMIT 하지 않습니다.
 
 #3. 새로운 터미널 창을 열어서 SYS 유져로 1번 노드에 접속하여 shutdown  transactional 을 수행합니다.
 
@@ -58,8 +57,7 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
 
 
   ⚡ 문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
-  1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
-  확인하시오 !
+  &nbsp;&nbsp;1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지 확인하시오 !
 
 
   &nbsp;
