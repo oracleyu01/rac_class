@@ -73,11 +73,16 @@ spfile 안의  아래의 3000 으로 셋팅한 내용을 지워야 합니다.
            1 processes  300       *
            2 processes  300       *
 
-  SQL#1> alter  system  set  processes=400  scope=spfile  sid='racdb1';
-  SQL#1> shutdown immediate
-  SQL#2> shutdown immediate
-  SQL#1> startup
-  SQL#2> startup
+  SQL#1> alter  system  set  processes=400  scope=spfile  sid='racdb1';  
+  
+  SQL#1> shutdown immediate  
+  
+  SQL#2> shutdown immediate  
+  
+  SQL#1> startup  
+  
+  SQL#2> startup  
+  
 
 >  😄 processes 파라미터는 반드시 양쪽 인스턴스가 똑같지 않다도 되는 파라미터 입니다.  
 >      그래서 startup 할때 에러가 나지 않았습니다.
@@ -94,8 +99,7 @@ spfile 안의  아래의 3000 으로 셋팅한 내용을 지워야 합니다.
 
 **⚡문제2.  다시  아래의 내용을 spfile 에서 지우시오 !**
 
- INST_ID NAME       VALUE      SID
----------- ---------- ---------- ----------
+
          2 processes  300        *
          2 processes  400        racdb1  <---- 삭제
          1 processes  300        *
