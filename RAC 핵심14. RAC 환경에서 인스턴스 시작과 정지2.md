@@ -38,7 +38,9 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
     SYS> connect  scott/tiger
     SCOTT>  @demobld.sql
 
-  &nbsp;  &nbsp;
+  &nbsp;  
+  &nbsp;  
+  
 #1. 1번노드와 2번 노드에서 둘다 scott 유져로 접속합니다.**
 
 #2. 1번 노드에서는 KING 의 월급을 9000으로 변경하고  2번 노드에서는 ALLEN 의 월급을 8000으로 변경합니다. 그리고 아직 둘다 COMMIT 하지 않습니다.
