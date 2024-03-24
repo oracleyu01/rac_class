@@ -21,8 +21,10 @@
 #4. undotbs3 을 1번 인스턴스용 undo tablespace 로 지정합니다.   
 &nbsp;
 
-**구현:**  
-&nbsp;
+**⚡구현:**  
+
+&nbsp;  
+
 **#1. 1번 노드에서 사용하는 undo tablespace 가 뭔지 확인합니다.**
 
 SQL#1>  show  parameter  undo_tablespace  
