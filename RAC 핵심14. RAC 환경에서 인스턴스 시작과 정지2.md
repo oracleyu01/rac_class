@@ -10,7 +10,14 @@
   3. shutdown  immediate
   4. shutdown  abort
 
- **그런데  rac 에만 있는 shutdown 옵션이 있습니다.**
+ **그런데  rac 에만 있는 shutdown 옵션이 있습니다.**  
+ ```mermaid
+graph TB
+    instance1(Instance #1)
+    instance2(Instance #2)
+    instance1 --> db[(voting disk)]
+    instance2 --> db
+```
 
       shutdown  transactional  local 
 
