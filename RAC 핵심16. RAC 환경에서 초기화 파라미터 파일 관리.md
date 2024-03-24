@@ -126,6 +126,6 @@
                  from gv$spparameter
                  where name='processes';
     
-    SQL#1> select  inst_id, name, value 
+    SQL#2> select  inst_id, name, value 
                  from gv$spparameter
                  where name='processes';
