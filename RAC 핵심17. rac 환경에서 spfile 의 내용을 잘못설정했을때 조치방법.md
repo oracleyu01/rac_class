@@ -5,7 +5,7 @@
 
 😄 잘못된 파라미터를 하나 더 추가한 경우에 대한 조치사항 입니다.
 
-**1️⃣ 양쪽 인스턴스에 셋팅된 db_files 파라미터 값을 조회하시오 ! **
+**1️⃣ 양쪽 인스턴스에 셋팅된 db_files 파라미터 값을 조회하시오 !**
 
 > 현재 인스턴스에 셋팅된 값 확인 
 
@@ -25,16 +25,16 @@
 
 > spfile 안의 내용을 확인
 
-  SQL#1> select  inst_id, name, value, sid
-               from gv$spparameter
-               where name='db_files';
-  
-   INST_ID NAME       VALUE      SID
-  ---------- ---------- ---------- ----------
-           1 db_files   2000       *
-           1 db_files   3000       racdb1
-           2 db_files   2000       *
-           2 db_files   3000       racdb1
+SQL#1> select  inst_id, name, value, sid
+             from gv$spparameter
+             where name='db_files';
+
+ INST_ID NAME       VALUE      SID
+---------- ---------- ---------- ----------
+         1 db_files   2000       *
+         1 db_files   3000       racdb1
+         2 db_files   2000       *
+         2 db_files   3000       racdb1
 
  **3️⃣ 양쪽 인스턴스를 내렸다가 올립니다.**  
 
@@ -44,12 +44,12 @@
 
 spfile 안의  아래의 3000 으로 셋팅한 내용을 지워야 합니다. 
 
- INST_ID NAME       VALUE      SID
+INST_ID NAME       VALUE      SID
 ---------- ---------- ---------- ----------
-         1 db_files   2000       *
-         1 db_files   3000       racdb1  <---------- 삭제해야함
-         2 db_files   2000       *
-         2 db_files   3000       racdb1  <---------- 삭제해야함
+       1 db_files   2000       *
+       1 db_files   3000       racdb1  <---------- 삭제해야함
+       2 db_files   2000       *
+       2 db_files   3000       racdb1  <---------- 삭제해야함
 
   SQL#1> alter  system   reset  db_files   scope=spfile  sid='racdb1'; 
   
