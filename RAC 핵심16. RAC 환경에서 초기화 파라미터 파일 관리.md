@@ -70,17 +70,17 @@
 
 > 현재 인스턴스에 반영된 상태를 확인 
 
-SQL#1> show parameter db_files
-SQL#2> show parameter db_files 
-SQL#1> select  inst_id, name, value 
-             from gv$parameter
-             where name='db_files';
+    SQL#1> show parameter db_files
+    SQL#2> show parameter db_files 
+    SQL#1> select  inst_id, name, value 
+                 from gv$parameter
+                 where name='db_files';
 
 > 현재 spfile 에는 어떻게 셋팅되어있는지 확인 
 
-SQL#1> select  inst_id, name, value 
-             from gv$spparameter
-             where name='db_files';
+    SQL#1> select  inst_id, name, value 
+                 from gv$spparameter
+                 where name='db_files';
 
 > 설명: value 에 값이 없으면 default 값으로 셋팅되어 있는것입니다. 
 
