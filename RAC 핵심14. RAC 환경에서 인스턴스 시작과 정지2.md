@@ -27,6 +27,8 @@
 > transactional local 이라고 하면   1번 인스턴스쪽에 transaction 만 종료되었으면 인스턴스를
 > 내립니다.
 
+  &nbsp;
+  &nbsp;
   
   **⚡ 실습1. rac 환경에서 shutdown trasactional 실습** 
 
