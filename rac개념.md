@@ -1,8 +1,8 @@
 ## ⭐⭐ RAC핵심1. RAC 란 무엇인가?  ⭐⭐
 
-<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
-
 ### 1️⃣ Oracle Real Application Clusters (RAC) ?
+
+<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
 
 다수의 데이터베이스 서버(노드)가 하나의 데이터베이스를 공유하면서 운영될 수 있게 하는 오라클의 고가용성 및 확장성 아키텍처입니다.
 
