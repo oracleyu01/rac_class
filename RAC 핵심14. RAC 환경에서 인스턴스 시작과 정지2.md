@@ -18,7 +18,6 @@
 > 내가 내리려는 인스턴스에 DML 작업이 없으면 그냥
 > 인스턴스를 내리겠다는 옵션입니다.
 
-     shutdown  transactional    
 
  그림설명 : https://cafe.daum.net/oracleoracle/SoJX/66
 
