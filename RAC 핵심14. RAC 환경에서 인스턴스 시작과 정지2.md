@@ -23,7 +23,7 @@
  그림설명 : https://cafe.daum.net/oracleoracle/SoJX/66
 
   
-> 설명:     1번 인스턴스를 shutdown transactional 로 내리려면 1번 , 2번 둘다    DML 작업을
+> 1번 인스턴스를 shutdown transactional 로 내리려면 1번 , 2번 둘다    DML 작업을
 > 하고 있는 세션들이 다 commit 이나 rollback 을 해야   내려갑니다.  그런데 shutdown
 > transactional local 이라고 하면   1번 인스턴스쪽에 transaction 만 종료되었으면 인스턴스를
 > 내립니다.
@@ -57,13 +57,13 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
       &nbsp;
         &nbsp;
 
-**문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로
-    &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;   변경하고 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
-   &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;       확인하시오 !**
+> **문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
+> 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
+> 확인하시오 !** 
+
+
   &nbsp;
-    &nbsp;
-      &nbsp;
-        &nbsp;
+  &nbsp;
 
 
-**문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
+> **문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
