@@ -38,7 +38,7 @@
   
 - **13. RAC 환경에서 언두 테이블 스페이스 관리**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC13.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%96%B8%EB%91%90%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4%20%EA%B4%80%EB%A6%AC.md)
   
-- **14. RAC 환경에서 인스턴스 시작과 정지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C14.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%20%EC%8B%9C%EC%9E%91%EA%B3%BC%20%EC%A0%95%EC%A7%80.txt)
+- **14. RAC 환경에서 인스턴스 시작과 정지**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC14.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%20%EC%8B%9C%EC%9E%91%EA%B3%BC%20%EC%A0%95%EC%A7%802.md)
   
 - **15. shutdown 명령어 외에 인스턴스를 올리고 내리는 명령어**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C15.%20%20shutdown%20%EB%AA%85%EB%A0%B9%EC%96%B4%20%EC%99%B8%EC%97%90%20%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4%EB%A5%BC%20%EC%98%AC%EB%A6%AC%EA%B3%A0%20%EB%82%B4%EB%A6%AC%EB%8A%94%20%EB%AA%85%EB%A0%B9%EC%96%B4.txt)
   
