@@ -86,35 +86,35 @@
 
 **2️⃣ db_files 를 200 에서 2000 으로 수정합니다.** 
 
-SQL#1> alter  system   set   db_files=2000  scope=spfile   sid='*';
+    SQL#1> alter  system   set   db_files=2000  scope=spfile   sid='*';
 
 **3️⃣ 양쪽 노드를 shutdown immediate 로 내렸다가 올립니다.** 
 
-SQL#1> shutdown immediate
-SQL#2> shutdown immediate
+    SQL#1> shutdown immediate
+    SQL#2> shutdown immediate
 
-SQL#1> startup
-SQL#2> startup
+    SQL#1> startup
+    SQL#2> startup
 
 **4️⃣ 잘 반영되었는지 확인합니다.**
 
-SQL#1> select  inst_id, name, value 
-             from gv$spparameter
-             where name='db_files';
+    SQL#1> select  inst_id, name, value 
+                 from gv$spparameter
+                 where name='db_files';
 
-SQL#1> select  inst_id, name, value 
-             from gv$spparameter
-             where name='db_files';
+    SQL#1> select  inst_id, name, value 
+                 from gv$spparameter
+                 where name='db_files';
 
 
 **😄 양쪽다 똑같이 셋팅하려면 ?   아래 처럼 sid='*' 을 써야합니다.** 
 
-SQL#1> alter  system   set   db_files=2000  scope=spfile   sid='*';
+    SQL#1> alter  system   set   db_files=2000  scope=spfile   sid='*';
 
 **😄 다르게 한다면 ?**  
  
-SQL#1> alter  system   set  undo_tablespace='undotbs1'  scope=spfile   sid='racdb1';
-SQL#2> alter  system   set  undo_tablespace='undotbs2'  scope=spfile   sid='racdb2';  
+    SQL#1> alter  system   set  undo_tablespace='undotbs1'  scope=spfile   sid='racdb1';
+    SQL#2> alter  system   set  undo_tablespace='undotbs2'  scope=spfile   sid='racdb2';  
 &nbsp;
 
 **⚡문제.  현재 db 에 띄울 수 있는 프로세서의 갯수가 150개 밖에 안됩니다. 이 갯수를 300개로 늘리세요.**   
