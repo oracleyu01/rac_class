@@ -57,13 +57,13 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
       &nbsp;
         &nbsp;
 
-> **문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
-> 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
-> 확인하시오 !** 
+  ⚡ **문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
+  1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
+  확인하시오 !** 
 
 
   &nbsp;
   &nbsp;
 
 
-> **문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
+⚡ **문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
