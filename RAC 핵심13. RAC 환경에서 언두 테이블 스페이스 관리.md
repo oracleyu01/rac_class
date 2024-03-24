@@ -47,7 +47,8 @@ SQL#1> select instance_name from v$instance;
 
 SQL#1> alter  system  set  undo_tablespace='undotbs3'  sid='racdb1' ;
 
- 설명:  sid='racdb1'  <--- 1번 인스턴스용 parameter를 변경해라!  
+ 설명:  
+ sid='racdb1'  <--- 1번 인스턴스용 parameter를 변경해라!  
            sid='racdb2'   <--  2번 인스턴스용 parameter 를 변경해라!  
            sid='*'           <--- 모든 인스턴스용 parameter 를 변경해라!  
 
