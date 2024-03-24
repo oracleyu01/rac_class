@@ -15,7 +15,7 @@
 graph TB
     instance1(Instance #1)
     instance2(Instance #2)
-    instance1 --> db[(voting disk)]
+    instance1 --> db[(database)]
     instance2 --> db
 ```
 
@@ -23,7 +23,14 @@ graph TB
 
 > 다른 인스턴스에 DML 작업이 끝날 때까지 기다리지 않고   
 > 내가 내리려는 인스턴스에 DML 작업이 없으면 그냥
-> 인스턴스를 내리겠다는 옵션입니다.
+> 인스턴스를 내리겠다는 옵션입니다.  
+ ```mermaid
+graph TB
+    instance1(Instance #1)
+    instance2(Instance #2)
+    instance1 --> db[(database)]
+    instance2 --> db
+```
 
 
       shutdown  transactional 
