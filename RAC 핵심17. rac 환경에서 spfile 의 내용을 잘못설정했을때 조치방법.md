@@ -29,8 +29,6 @@ SQL#1> select  inst_id, name, value, sid
              from gv$spparameter
              where name='db_files';
 
- INST_ID NAME       VALUE      SID
----------- ---------- ---------- ----------
          1 db_files   2000       *
          1 db_files   3000       racdb1
          2 db_files   2000       *
@@ -44,8 +42,7 @@ SQL#1> select  inst_id, name, value, sid
 
 spfile 안의  아래의 3000 으로 셋팅한 내용을 지워야 합니다. 
 
-INST_ID NAME       VALUE      SID
----------- ---------- ---------- ----------
+
        1 db_files   2000       *
        1 db_files   3000       racdb1  <---------- 삭제해야함
        2 db_files   2000       *
@@ -82,7 +79,7 @@ INST_ID NAME       VALUE      SID
   SQL#1> startup
   SQL#2> startup
 
->  😄 processes 파라미터는 반드시 양쪽 인스턴스가 똑같지 않다도 되는 파라미터 입니다.
+>  😄 processes 파라미터는 반드시 양쪽 인스턴스가 똑같지 않다도 되는 파라미터 입니다.  
 >      그래서 startup 할때 에러가 나지 않았습니다.
 
   SQL#1> select  inst_id, name, value, sid
@@ -92,7 +89,7 @@ INST_ID NAME       VALUE      SID
   SQL#1> show  parameter  processes    400
   SQL#2> show  parameter  processes    300
 
->  😄 인스턴스 이름으로 설정된 파라미터가 * 보다 우선순위가 높아서 1번 인스턴스에서
+>  😄 인스턴스 이름으로 설정된 파라미터가 * 보다 우선순위가 높아서 1번 인스턴스에서  
 >     show parameter processes 했을때 300 으로 보이지 않고 400으로 보이는겁니다.
 
 **⚡문제2.  다시  아래의 내용을 spfile 에서 지우시오 !**
