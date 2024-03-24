@@ -49,7 +49,7 @@ $ srvctl  config  database  -d  racdb  -a
 
 &nbsp;
 
-****⚡** 문제1. 책 4-24 페이지를 보고 db 올리는것을 수동으로 변경되게하시오 !**  
+**⚡ 문제1. 책 4-24 페이지를 보고 db 올리는것을 수동으로 변경되게하시오 !**  
 
 리눅스 서버를 내렸다 올려도 db 가 자동으로 올라오지 못하게 하시오 !
 
@@ -57,7 +57,7 @@ $ srvctl  modify  database  -d  racdb  -y  manual
 
 $ srvctl  config  database  -d  racdb  -a 
 
-문제2. 다시 automatic 으로 변경하세요 ~
+**⚡ 문제2. 다시 automatic 으로 변경하세요 ~**
 
 $ srvctl  modify  database  -d  racdb  -y  automatic
 
