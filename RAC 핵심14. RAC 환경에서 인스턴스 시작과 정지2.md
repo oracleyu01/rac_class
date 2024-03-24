@@ -34,9 +34,9 @@
 
 scott 유져를 생성하고 demobld.sql 를 돌립니다.*
 
-    SYS> create  user  scott   identified  by tiger;
-    SYS> grant  dba  to scott;
-    SYS> connect  scott/tiger
+    SYS> create user scott identified by tiger;
+    SYS> grant dba to scott;
+    SYS> connect scott/tiger
     SCOTT>  @demobld.sql
 
   
