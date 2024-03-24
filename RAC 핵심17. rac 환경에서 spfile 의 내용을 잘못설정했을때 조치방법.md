@@ -70,8 +70,6 @@ spfile 안의  아래의 3000 으로 셋팅한 내용을 지워야 합니다.
                from gv$spparameter
                where name='processes';
   
-    INST_ID NAME       VALUE      SID
-  ---------- ---------- ---------- ----------
            1 processes  300       *
            2 processes  300       *
 
