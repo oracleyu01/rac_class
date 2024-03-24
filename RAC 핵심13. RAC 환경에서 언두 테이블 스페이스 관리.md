@@ -1,7 +1,7 @@
 
 ## ⭐⭐ RAC 핵심13. RAC 환경에서 언두 테이블 스페이스 관리   ⭐⭐
 
-'그림설명'
+'그림설명'  
 
 <img src="https://github.com/oracleyu01/rac_class/blob/main/undo.png" width="500" height="400">
 
