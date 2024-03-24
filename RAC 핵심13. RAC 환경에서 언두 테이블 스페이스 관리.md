@@ -97,6 +97,6 @@ SQL#2> drop  tablespace  undotbs4  including  contents and datafiles;
 
 
 
-😊 위의 내용을 .bash_profile 에 설정한 화면 캡쳐해서 답글 올리시고 검사받으시면 됩니다.
+😊 잘하고 계세요 ^^ 
 
 
