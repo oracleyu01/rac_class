@@ -44,7 +44,7 @@ graph TB
   &nbsp;
   &nbsp;
   
-  **⚡ 실습1. rac 환경에서 shutdown trasactional 실습** 
+2️⃣  **⚡ 실습1. rac 환경에서 shutdown trasactional 실습** 
 
 scott 유져를 생성하고 demobld.sql 를 돌립니다.*
 
