@@ -41,7 +41,7 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
   &nbsp;  
   &nbsp;  
   
-#1. 1번노드와 2번 노드에서 둘다 scott 유져로 접속합니다.**
+#1. 1번노드와 2번 노드에서 둘다 scott 유져로 접속합니다.
 
 #2. 1번 노드에서는 KING 의 월급을 9000으로 변경하고  2번 노드에서는 ALLEN 의 월급을 8000으로 변경합니다. 그리고 아직 둘다 COMMIT 하지 않습니다.
 
@@ -49,21 +49,21 @@ scott 유져를 생성하고 demobld.sql 를 돌립니다.*
 
 #4. 양쪽 노드에 scott 으로 접속한 세션들에서 commit 을 수행합니다.
 
-#5. 그러면 내려가는지 확인합니다.*
+#5. 그러면 내려가는지 확인합니다.
 
-#6. 다시 1번 인스턴스를 올립니다.*
-  &nbsp;
-    &nbsp;
-      &nbsp;
-        &nbsp;
+#6. 다시 1번 인스턴스를 올립니다.  
+&nbsp;
+&nbsp;
+&nbsp;
 
-  ⚡ **문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
+
+  ⚡ 문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로 변경하고  
   1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
-  확인하시오 !** 
+  확인하시오 !
 
 
   &nbsp;
   &nbsp;
 
 
-⚡ **문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
+⚡ 문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~
