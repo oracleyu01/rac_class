@@ -47,9 +47,9 @@ SQL#1> select instance_name from v$instance;
 
 SQL#1> alter  system  set  undo_tablespace='undotbs3'  sid='racdb1' ;
 
- 설명:  sid='racdb1'  <--- 1번 인스턴스용 parameter를 변경해라!
-           sid='racdb2'   <--  2번 인스턴스용 parameter 를 변경해라!
-           sid='*'           <--- 모든 인스턴스용 parameter 를 변경해라!
+ 설명:  sid='racdb1'  <--- 1번 인스턴스용 parameter를 변경해라!  
+           sid='racdb2'   <--  2번 인스턴스용 parameter 를 변경해라!  
+           sid='*'           <--- 모든 인스턴스용 parameter 를 변경해라!  
 
 SQL#1> show  parameter undo_tablespace
 
@@ -91,19 +91,7 @@ SQL#1> drop   tablespace  undotbs3  including  contents  and  datafiles;
 SQL#2> drop  tablespace  undotbs4  including  contents and datafiles;  
 &nbsp;
 
-**오늘의 마지막 문제1.  여러분에게 필요한 alias 를 .bash_profile 에 등록하세요.**
 
- ss  <--- sys 유져로 접속하는것 !  
- r   <---  rman 으로 접속하는것 !
-
- dbs <-- cd $ORACLE_HOME/dbs 밑으로 빨리 가게 하는 alias
- net   <-- cd $ORACLE_HOME/network/admin 밑으로 빨리가게하는 alias
-
-SQL#1> @logsw  <-- 로그 스위치 일으키는 스크립트
-SQL#2> @ckpt    <-- checkpoint  일으키는 스크립트   
-&nbsp;
-&nbsp;
-&nbsp;
 
 
 😊 위의 내용을 .bash_profile 에 설정한 화면 캡쳐해서 답글 올리시고 검사받으시면 됩니다.
