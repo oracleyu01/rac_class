@@ -1,43 +1,67 @@
-## ⭐⭐ RAC핵심1. RAC 란 무엇인가?  ⭐⭐
-  &nbsp;
+
+## ⭐⭐ RAC 핵심14. RAC 환경에서 인스턴스 시작과 정지  ⭐⭐
+
+## **1️⃣ shudown 옵션 4가지**
+
+  1. shutdown  normal
+  2. shutdown  transactional  -->  누군가 DML 작업을 하고 있으면 인스턴스가   
+                                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   안내려가고 commit 이나 rollback 을 해서  
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; transaction 을 종료해야 내려갑니다.   
+  3. shutdown  immediate
+  4. shutdown  abort
+
+ **그런 데  rac 에만 있는 shutdown 옵션이 있습니다.**
+
+      shutdown  transactional  local 
+
+> 다른 인스턴스에 DML 작업이 끝날 때까지 기다리지 않고   
+> 내가 내리려는 인스턴스에 DML 작업이 없으면 그냥
+> 인스턴스를 내리겠다는 옵션입니다.
+
+     shutdown  transactional    
+
+ 그림설명 : https://cafe.daum.net/oracleoracle/SoJX/66
+
   
-### 1️⃣ Oracle Real Application Clusters (RAC) ?  
-  &nbsp;
+> 설명:     1번 인스턴스를 shutdown transactional 로 내리려면 1번 , 2번 둘다    DML 작업을
+> 하고 있는 세션들이 다 commit 이나 rollback 을 해야   내려갑니다.  그런데 shutdown
+> transactional local 이라고 하면   1번 인스턴스쪽에 transaction 만 종료되었으면 인스턴스를
+> 내립니다.
 
-<img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
-
-다수의 데이터베이스 서버(노드)가 하나의 데이터베이스를 공유하면서 운영될 수 있게 하는  
-
-오라클의 고가용성 및 확장성 아키텍처입니다.
-
-RAC는 데이터베이스, 인스턴스, 리스너, Automatic Storage Management(ASM), 서비스, 가상 IP(VIP) 등을 포함하여,  
-
-여러 응용 프로그램들이 마치 단일 서버에서 운영되는 것처럼 보이게 합니다.  
-
-&nbsp;
-
-### 2️⃣ Oracle Real Application Clusters(RAC)의 장점 2가지:
-
-  &nbsp;
-  <img src="https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B7%B8%EB%A6%BC.png" width="500" height="400">
   
- ⚡ **고가용성(High Availability)**:  RAC는 24시간 연속적인 서비스 제공을 가능하게 합니다. 
+  **⚡ 실습1. rac 환경에서 shutdown trasactional 실습** 
 
-사용자가 접속한 서버 또는 인스턴스에 문제가 발생해도, 사용자는 다른 서버를 통해 서비스를 계속해서 받을 수 있습니다.  
+scott 유져를 생성하고 demobld.sql 를 돌립니다.*
 
-이는 비즈니스 연속성과 데이터 접근성을 크게 향상시킵니다.  
-&nbsp;
+    SYS> create  user  scott   identified  by tiger;
+    SYS> grant  dba  to scott;
+    SYS> connect  scott/tiger
+    SCOTT>  @demobld.sql
 
- ⚡ **확장성(Scalability)**: RAC는 노드를 추가함으로써 시스템의 처리 능력을 쉽게 확장할 수 있습니다. 
+  &nbsp;  &nbsp;
+#1. 1번노드와 2번 노드에서 둘다 scott 유져로 접속합니다.**
 
-이론적으로 최대 100대의 노드를 연결할 수 있으며, 이를 통해 더 많은 사용자와 트랜잭션을 처리할 수 있습니다.
+#2. 1번 노드에서는 KING 의 월급을 9000으로 변경하고  2번 노드에서는 ALLEN 의 월급을 8000으로 변경합니다. 그리고 아직 둘다 COMMIT 하지 않습니다.
 
-RAC를 통해 구현되는 다중 노드 아키텍처는 데이터베이스 서비스의 가용성과 성능을 극대화하며,  
+#3. 새로운 터미널 창을 열어서 SYS 유져로 1번 노드에 접속하여 shutdown  transactional 을 수행합니다.
 
-기업이 빠르게 변화하는 비즈니스 요구와 데이터량 증가에 효과적으로 대응할 수 있도록 지원합니다.  
+#4. 양쪽 노드에 scott 으로 접속한 세션들에서 commit 을 수행합니다.
 
+#5. 그러면 내려가는지 확인합니다.*
+
+#6. 다시 1번 인스턴스를 올립니다.*
   &nbsp;
+    &nbsp;
+      &nbsp;
+        &nbsp;
+
+**문제1.  이번에는 2번 인스턴스에만 scott 으로 접속해서 JONES 의 월급을 7000으로
+    &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;   변경하고 1번 인스턴스를 shutdown transactional 이라고 하면 내려가는지
+   &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;       확인하시오 !**
   &nbsp;
+    &nbsp;
+      &nbsp;
+        &nbsp;
 
 
-😊 RAC 의 장점 2가지를 꼭 기억하고 계세요 !
+**문제2.  shutdown  transactional local 을 직접 테스트 해보시오 ~**
