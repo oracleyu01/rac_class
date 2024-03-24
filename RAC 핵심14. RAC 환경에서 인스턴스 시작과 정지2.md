@@ -19,7 +19,7 @@
 > 인스턴스를 내리겠다는 옵션입니다.
 
 
- 그림설명 : https://cafe.daum.net/oracleoracle/SoJX/66
+      shutdown  transactional 
 
   
 > 1번 인스턴스를 shutdown transactional 로 내리려면 1번 , 2번 둘다    DML 작업을
