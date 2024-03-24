@@ -34,7 +34,7 @@
   
 - **11.  RAC 환경에서 리두 로그 파일 관리 방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC11.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A6%AC%EB%91%90%20%EB%A1%9C%EA%B7%B8%20%ED%8C%8C%EC%9D%BC%20%EA%B4%80%EB%A6%AC%20%EB%B0%A9%EB%B2%95.md)
   
-- **12. RAC 환경에서 리두 로그 그룹 추가하기**: 📄 [노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C12.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A6%AC%EB%91%90%20%EB%A1%9C%EA%B7%B8%20%EA%B7%B8%EB%A3%B9%20%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0.txt)
+- **12. RAC 환경에서 리두 로그 그룹 추가하기**: 📄 [노트](https://github.com/oracleyu01/rac_class/blob/main/RAC%20%ED%95%B5%EC%8B%AC12.%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A6%AC%EB%91%90%20%EB%A1%9C%EA%B7%B8%20%ED%8C%8C%EC%9D%BC%20%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0.md)
   
 - **13. RAC 환경에서 언두 테이블 스페이스 관리**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C13.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%96%B8%EB%91%90%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%ED%8E%98%EC%9D%B4%EC%8A%A4%20%EA%B4%80%EB%A6%AC.txt)
   
