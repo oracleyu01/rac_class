@@ -1,0 +1,44 @@
+
+▣ 예제22. RAC 환경에서 모든 인스턴스에 영향을 주는 명령어  
+
+설명 그림: https://cafe.daum.net/oracleoracle/SoJX/96
+
+1. 현재 접속한 노드의 인스턴스에만 영향을 주는 명령어
+
+   1. alter system switch  logfile;
+  
+   2.  recover 명령어 
+
+   3. alter  system  checkpoint   local; 
+
+2. 모든 인스턴스에 영향을 주는 명령어 
+
+   1.  alter  system  archive  log  current ;
+ 
+   로그 스위치를 글로벌 하게 수행하는 명령어
+
+  2.  alter  system  checkpoint  global ;
+
+   체크 포인트를 글로벌하게 수행하는 명령어 
+   
+■  실습 
+
+#1.  1번 인스턴스의 리두 로그 파일만 로그 스위치를 일으키시오 !
+
+SQL#1> alter system switch logfile;
+
+#2.  모든 인스턴스의 리두 로그 파일들을 전부 로그 스위치 일으키시오 !
+
+SQL#1> alter  system  archive  log   current;
+
+#3.  1번 인스턴스에서만 checkpoiont 를 일으키시오 !
+
+SQL#1> alter  system  checkpoint  local;
+
+#4.  모든 인스턴스에서 다 checkpoint 가 일어나게 하시오 !
+
+SQL#1> alter  system  checkpoint  global;
+
+※ dba 를 위한 팁 !  RAC 환경에서 글로벌하게 checkpoint 를 일으키는 때는 언제인가?
+
+   full backup 하기 전에 수행합니다. 
