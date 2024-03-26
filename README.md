@@ -8,7 +8,7 @@
 
 &nbsp;
 
-## 수업 자료( ☀️ 2024년 3월 23일 updated)
+## 수업 자료( ☀️ 2024년 3월 26일 updated)
 
 
 - **1. RAC 개념**:  📄[노트](https://github.com/oracleyu01/rac_class/blob/main/rac%EA%B0%9C%EB%85%90.md)
