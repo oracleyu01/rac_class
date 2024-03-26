@@ -1,0 +1,97 @@
+
+▣ 예제36.  RAC 환경에서 instance recovery 튜닝
+
+★  instance recovery 란 ?   갑자기 db 가 비정상적으로 shutdown 이 되었을때
+                                    다시 startup 할 때 복구하는 작업
+
+ 현업에서 instance recovery 가 일어나는 경우 ?
+
+     db 에 과도한 DML 작업을 수행해서 db 가 먹통이 되어버렸습니다. 
+     dba 가 어쩔 수 없이 db 를 shutdown  abort 해야합니다. 
+     다시 startup 하면 복구하느라고 시간을 다 잡아먹습니다. 
+     이 복구하는 시간이 instance recovery 시간 입니다. 
+
+     그래서 이 먹통이 되는 복구 시간을 빠르게  끝내는게 instance recovery 튜닝입니다.
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/154
+
+설명:  1번 노드에 과도한 DML 작업이 들어와서 1번 인스턴스가 먹통이 되면
+        어쩔 수 없이 dba 가 shutdown abort 로 내리게 되는데 이때
+        2번 노드에서 1번 인스턴스에 대한 instance recovery 가 발생합니다. 
+       그러면서 1번 노드도 접속이 안되게 되고 2번 노드도 instance recovery 작업이
+       cpu 를 100% 쓰면서 느려지게 됩니다. 
+
+  그래서 이를 대비하는 일이 바로  instance recovery 튜닝 입니다. 
+
+        노드 #1  ---------------------------------------------- 노드 #2 
+  
+      비정상 종료                                                 instance  recovery
+    ( shutdown abort)                                            ↓
+                                                       1. rollforward (commit 을 했는데 data file에
+                                                                          반영안되거를 반영하는 작업)
+
+                                                       2. rollback ( update 를 했는데 commit 안하거
+                                                                      를 rollback 합니다.)
+■ 실습
+
+#1.  1번 노드는 sys 유져로 접속합니다.
+#2.  2번 노드는 alert logfile 을 모니터링합니다.
+#3.  1번 노드에서 shutdown abort 를 하고 2번 노드에서 instance recovery 하는지
+      살펴봅니다. 
+
+▣ 예제37.  RAC 의 instance  recovery   파라미터   튜닝하기 
+
+  RAC 환경에서 instance  recovery 튜닝을 하기 위해서 반드시 알아야할 파라미터 2개 
+
+  1.  히든 파라미터 _fast_start_instance_recovery_target  :
+
+     GRD 가 재구성되는 시간을 결정하는 파라미터 
+
+     GRD(Global  Resource  Directory) :  내가 검색하고자하는 최신 데이터가 
+                                                    어느 노드에 있는지 위치정보가 있는 저장소
+
+  그림 : https://cafe.daum.net/oracleoracle/SoJX/157
+  
+  설명:  1번 인스턴스가 비정상적으로 종료되면 2번 인스턴스에서 1번 인스턴스가
+          가지고 있던 GRD 정보가 갱신됩니다.  그 시간을 결정하는 파라미터가 
+           _fast_start_instance_recovery_target  입니다. 
+                                                                      
+  2. fast_start_mttr_target   :  instance  recovery ( rollforward + rollback ) 에 걸리는 시간 
+
+  기본값은 자동입니다.  오라클이 알아서 이 시간을 결정합니다. 그런데 수동으로 
+   이 시간을 셋팅할 수 있습니다.   10분이라고 셋팅하면 오라클에 복구하는데
+    걸리는 시간을 10분으로 셋팅합니다.  그리고 10분을 맞춰주기 위해서 
+    평상시 dml 이 많으면 바로바로 메모리의 내용을 disk 로 반영합니다. 
+
+■ 실습
+
+#1.  인스턴스 리커버리에 걸리는 시간을 10분으로 지정합니다. 
+
+SQL#1> show  parameter  fast_start_mttr_target 
+
+SQL#1> alter  system  set  fast_start_mttr_target=600  scope=both  sid='*';
+
+SQL#1> show  parameter  fast_start_mttr_target 
+
+#2.  GRD 를 재구성하는 시간은 오라클에서 변경하라고 권장하지 않으므로 확인만 합니다.
+
+col "Parameter" format a40
+col "Session Value" format a15
+col "Instance Value" Format a15
+
+select  a.ksppinm  "Parameter",
+            b.ksppstvl "Session Value",
+            c.ksppstvl "Instance Value"
+     from x$ksppi a, x$ksppcv b, x$ksppsv c
+    where a.indx = b.indx and a.indx = c.indx
+      and a.ksppinm like '%&param_name%';
+
+결과가 출력되지는 않습니다. 
+
+문제1.   RAC 환경에서  instance recovery 에 걸리는 시간을 15분으로 지정하시오 !
+
+SQL#1> alter  system  set  fast_start_mttr_target=900  scope=both  sid='*';
+
+※  잦은 instance recovery  의 긴 복구 시간으로 문제가 될 때 위와 같이 설정하면
+    복구 시간을 미리 예상할 수 있어서 유용합니다. 
+

@@ -1,0 +1,146 @@
+
+▣ 예제33.  RAC 환경에서 flashback  database 로 불완전 복구하기
+
+면접질문:  flashback 과 복구의 차이가 무엇입니까 ?
+
+답변:  복구는 과거에 백업받았던 파일을 복원해와서 복구하는것이고
+         flashback 은 그동안 작업했던 작업을 받대로 수행해서 과거로 
+         되돌리는것입니다.
+
+복구를 하던 flashback 을 하던 RAC 환경에서 작업할 때는 
+cluster_database 파라미터를 false 로 해놓고 작업하기를 권장합니다.
+복구할때 다른 노드가 올라와 버리면 복구가 실패하기 때문입니다. 
+
+면접질문: RAC 환경에서 복구할 때 특별히 주의사항이 무엇입니까?
+
+답변:  cluster_database 파라미터를 false 로 해놓고 한쪽 인스턴스만 올려서
+        복구를 하는게 주의사항입니다.
+
+■ 실습
+
+■ 실습
+순서
+#1. flashback  database 기능이 활성화 되어져있는지 확인합니다.
+#2. 모든 인스턴스를 shutdown immediate 를 하고 한쪽만 mount 로 올립니다.
+#3. flashback  database 기능을 활성화 시킵니다.
+#4. db 를 open 시키고 flashback database 기능이 활성화 되었는지 확인합니다.
+#5. 현재 시간을 확인합니다.
+#6. 현재 scn 번호를 확인합니다.( system change number의 약자)
+#7. scott 유져를 drop 합니다.
+#8. (복구) cluster_database 를 false 로 변경합니다. 
+#8. (복구) shutdown immediate 로 양쪽 인스턴스를 모두 내립니다.
+#9. (복구) 한쪽 인스턴스만 startup mount 를 합니다.
+#10. (복구)  scott 유져 drop 되기 전으로 flashback database 를 수행합니다.
+#11. (복구) resetlogs 로 db를 올립니다. 
+#12. (복구) clster_database 를 true 로 변경합니다. 
+#13. (복구) 양쪽 인스턴스를 내렸다 올립니다.
+#14. rman 으로 전체 full backup 을 수행합니다.
+
+
+구현:
+#1. flashback  database 기능이 활성화 되어져있는지 확인합니다.
+
+SQL#1> select  flashback_on  from  v$database; 
+
+#2. 양쪽 인스턴스를 모두 shutdown immediate 를 하고 한쪽만 mount 로 올립니다.
+
+SQL#1> shutdown  immediate
+SQL#2> shutdown  immediate
+SQL#1> startup  mount
+
+#3. flashback  database 기능을 활성화 시킵니다.
+
+SQL#1> alter  database  flashback  on;
+
+#4. db 를 open 시키고 flashback database 기능이 활성화 되었는지 확인합니다.
+
+SQL#1> alter  database  open;
+SQL#1> select flashback_on  from  v$database;
+
+SQL#2> startup
+
+#5. 현재 시간을 확인합니다.
+
+.bash_profile 맨 아래에 아래의 내용이 있어야합니다.
+
+NLS_LANG=american_america.we8iso8859p15
+NLS_DATE_FORMAT='RRRR/MM/DD:HH24:MI:SS'
+export NLS_LANG
+export NLS_DATE_FORMAT
+
+SQL#1> select  sysdate from dual;
+
+2024/03/25:15:04:20
+
+#6. 현재 scn 번호를 확인합니다.( system change number의 약자)
+
+SQL#1> select  current_scn  from  v$database;
+
+CURRENT_SCN
+---------------
+  1970974
+
+SQL#1> alter  system switch  logfile;
+SQL#1> alter  system checkpoint;
+
+#7. scott 유져를 drop 합니다.
+
+SQL#1>  drop  user  scott  cascade;
+
+#8. (복구) cluster_database 를 false 로 변경합니다. 
+
+SQL#1>  alter  system  set  cluster_database=false  scope=spfile  sid='*';
+
+#9. (복구) 양쪽 인스턴스를 모두 shutdown immediate 로 db 를 내립니다.
+
+SQL#1> shutdown  immediate
+
+#10. (복구) 한쪽만 startup mount 를 합니다.
+
+SQL#1> startup  mount
+
+#11. (복구)  scott 유져 drop 되기 전으로 flashback database 를 수행합니다.
+
+sys> flashback  database  to  timestamp
+       to_timestamp('2024/03/25:15:04:20','RRRR/MM/DD:HH24:MI:SS');
+
+또는
+
+sys> flashback  database  to  scn   1970974;
+
+
+#11. (복구) resetlogs 로 db를 올립니다. 
+
+#12. scott 으로 접속이 되는지 확인합니다.
+
+#13. cluster_database 를 true 로 변경합니다.
+
+SQL#1>  alter  system  set  cluster_database=true  scope=spfile  sid='*';
+
+#14. 양쪽 인스턴스를 내렸다 올립니다
+
+#15. rman 으로 전체 full backup 을 수행합니다.
+
+문제1. 다음과 같이 scott 유져로 접속해서 scott 유져가 가지고 있는 모든 테이블들을
+        전부 drop 을 하고 drop 되기 전으로 flashback database 하시오 !
+
+SQL#1> alter  system   switch  logfile;
+SQL#1> alter  system  checkpoint;
+SQL#1> select  sysdate  from dual;
+SQL#1> connect scott/tiger
+SQL#1> select  table_name  from  user_tables;
+SQL#1> drop  table  emp;
+SQL#1> drop  table  dept;
+SQL#1> drop  table  salgrade;
+SQL#1> drop  table  bonus;
+SQL#1> drop  table  emp1000;
+
+문제2.  flashback database 기능을 다시 끄세요 
+
+답:
+#1. 양쪽 인스턴스를 모두 shutdown immediate 로 내립니다.
+#2. 한쪽 인스턴스만 startup mount 합니다.
+#3. alter  database  flashback  off;  
+#4. alter  database  open;
+#5. 다른 인스턴스를 올립니다.
+

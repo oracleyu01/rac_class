@@ -1,0 +1,111 @@
+
+▣ 예제28. RAC 환경에서 control file 이 깨졌을 때 복구 방법 
+
+일단 수행하기 전에 백업을 단단히 걸어놓겠습니다.
+
+1. control file을 생성하는 스크립트를 생성합니다.
+
+SQL#1> alter  database  backup  controlfile   to  trace   as  '/home/oracle/cre_con2.sql';
+
+2. 알맨에서  backup  database   을 수행합니다.
+
+$ rman  target  sys/oracle   nocatalog
+
+RMAN> configure  controlfile  autobackup  on;
+
+RMAN> backup  database; 
+
+RAC 환경에서 controlfile 을 복구하려면 반드시 cluster_database 파라미터를 false 로 
+해놓고 모든 인스턴스를 내리고 한쪽 인스턴스에 접속해서 복구를 해야합니다. 
+
+■ 실습
+순서:
+#1. controlfile 을 생성하는 스크립트를 생성합니다. 
+#2. controlfile 생성 스크립트를 편집합니다.
+#3. db id 가 어떻게 되는지 미리 확인합니다.
+#4. controlfile 의 위치를 확인합니다.
+#5. 양쪽 인스턴스를 모두 shutdown  immediate 를 합니다.
+#6. grid 유져로 접속해서 asmcmd 로 접속합니다.
+#7. controlfile 이 있는곳으로 가서 controlfile 을 모두 삭제합니다.
+#8. 다시 oracle 유져로 접속해서 startup 을 합니다. 
+#9. cluster_database 를 false 로 지정합니다.
+#10. 접속한 인스턴스를 shutdown abort 를 내립니다.
+#11. sys 유져로 접속해서 controlfile 생성하는 스크립트를 수행합니다.
+#12. cluster_database 를 true 로 변경합니다.
+#13. 접속한 인스턴스를 shutdown immediate 합니다.
+#14. 양쪽 인스턴스를 startup 합니다. 
+
+구현:
+#1. controlfile 을 생성하는 스크립트를 생성합니다. 
+
+SQL#1> alter  database  backup  controlfile  to trace  as  '/home/oracle/cre_con3.sql';
+
+#2. controlfile 생성 스크립트를 편집합니다.
+
+#3. db id 가 어떻게 되는지 미리 확인합니다.
+
+SQL#1> select dbid
+            from v$database;
+
+      DBID
+--------------
+1148479398
+
+#4. controlfile 의 위치를 확인합니다.
+
+SQL#1> select name from v$controlfile;
+
++DATA/racdb/controlfile/current.260.1150862631
++FRA/racdb/controlfile/current.256.1150862631
+
+#5. 양쪽 인스턴스를 모두 shutdown  immediate 를 합니다.
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+#6. grid 유져로 접속해서 asmcmd 로 접속합니다.
+
+$ su - grid
+[grid@+ASM1 ~]$ asmcmd
+ASMCMD>
+
+#7. controlfile 이 있는곳으로 가서 controlfile 을 모두 삭제합니다.
+
+#8. 다시 oracle 유져로 접속해서 startup 을 합니다. 
+
+[grid@+ASM1 ~]$ su - oracle
+암호:
+[oracle@racdb1 ~]$ sqlplus  / as  sysdba 
+SQL#1> startup
+ORA-00205: error in identifying control file, check alert log for more info
+
+#9. cluster_database 를 false 로 지정합니다.
+
+SQL#1> show parameter cluster_database
+
+SQL#1> alter system  set cluster_database=false  scope=spfile  sid='*';
+
+#10. 접속한 인스턴스를 shutdown abort 를 내립니다.
+
+#11. sys 유져로 접속해서 controlfile 생성하는 스크립트를 수행합니다.
+
+SQL#1> @c3.sql
+
+#12. cluster_database 를 true 로 변경합니다.
+
+SQL#1> alter  system  set  cluster_database=true  scope=spfile  sid='*'; 
+
+#13. 접속한 인스턴스를 shutdown immediate 합니다.
+
+
+
+#14. 양쪽 인스턴스를 startup 합니다. 
+
+#15. 컨트롤 파일이 잘 있는지 확인합니다.
+
+SQL#1>  select  name  from  v$controlfile;
+
+SQL#1> show parameter control_files 
+
+문제1. control file 을  조회하는 스크립트를 controlfile.sql 로 저장하시오 !
+

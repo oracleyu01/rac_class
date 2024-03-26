@@ -1,0 +1,78 @@
+
+▣ 예제27.  RAC 환경에서 data file 이 손상되었을 때 복구 방법 
+
+RAC 환경에서 복구는 한쪽노드에서만 진행해야 합니다. 
+다른 노드들은 전부 셧다운 되어져 있어야합니다. 
+
+■ 실습
+#1. 데이터 파일이 뭐가 있는지 조회합니다. 
+
+SQL#1> select  file_name from dba_data_files; 
+
++DATA/racdb/datafile/ts01.270.1164283653  <--- 확인해두세요
+
+#2. 양쪽 인스턴스를 둘다 shutdown abort 합니다.
+
+SQL#1> shutdown abort
+SQL#2> shutdown abort
+
+#3. asmcmd 로 접속해서  ts01 데이터 파일을 삭제합니다.
+
+[oracle@racdb1 ~]$ ps -ef |grep pmon  
+
+[oracle@racdb1 ~]$ su - grid
+[grid@+ASM1 ~]$ . oraenv
+ORACLE_SID = [+ASM1] ? +ASM1
+
+[grid@+ASM1 ~]$ asmcmd
+ASMCMD> 
+
++DATA/racdb/datafile/ts01.270.1164283653  <-- 이 파일이 있는곳으로 이동합니다.
+
+ASMCMD> pwd
++data/racdb/datafile
+
+ASMCMD> rm TS01.270.1164283653
+
+#4. 1번 인스턴스를 startup 합니다.
+
+[grid@+ASM1 ~]$ su -  oracle
+암호:
+
+[oracle@racdb1 ~]$ sqlplus / as sysdba
+SQL#1> startup
+
+ORA-01110: data file 8: '+DATA/racdb/datafile/ts01.270.1164283653'
+
+#5. RMAN 으로 접속합니다. 
+
+$ rman  target  sys/oracle  nocatalog 
+
+#6. 손상된 데이터 파일을 복원합니다.
+
+RMAN> restore  datafile 8;
+
+#7. 손상된 데이터 파일을 복구합니다.
+
+RMAN> recover  datafile 8;
+
+#8. 1번 인스턴스를 OPEN 으로 올립니다. 
+
+RMAN> alter database open;
+
+#9. 2번 인스턴스를 startup 합니다. 
+
+SQL#2> startup
+
+문제1.  위의 실습을 다시 수행하는데 이번에는 data file 을 2개를 깨트리고 복구하시오 !
+
+SQL#1> select file_name from dba_data_files;
+
+select * from v$recover_file;  <--- 복구해야할 파일 리스트 조회
+
+※ Rac 에서는 복구 어드바이져를 사용할 수 없습니다.
+
+RMAN> list  failure;
+RMAN> advise  failure;
+RMAN> repair  failure;
+

@@ -1,0 +1,115 @@
+▣ 예제30.  RAC 환경에서  time base 불완전 복구하기 
+
+면접질문:   완전 복구와 불완전 복구의 차이가 무엇인지 대답해주 실 수 있나요?
+
+답변:  완전 복구는 장애가 나기 직전에 마지막으로 commit 된 시점으로 db 를 복구
+        하는것을 말하고 불완전 복구는 과거의 특정 시간으로 db 를 복구하는것을 
+        말합니다.  
+
+
+사람의 실수나 application 의 잘못으로 데이터가 지워지는 일이 발생하면 복구를 해야합니다. 
+
+면접질문 : 테이블의 데이터가 지워지고 commit 되었다면 복구하는 방법이 무엇이 
+              있습니까 ?
+
+답변:     1.  flashback   table   기술로 과거의 특정 시간으로 복구하는 기술
+           2.  time base 불완전 복구로 복구하는 기술 
+           3.  export 받은 dump 나 pump 로 복구하는 기술 
+
+■ 실습
+
+#0.  RMAN 으로  full backup 을 먼저 받습니다. 
+#1. .bash_profile 에 시간을 설정하는 파라미터를 추가해야합니다.
+#2. 현재 시간을 확인합니다.
+#3. 로그 스위치를 2번 정도 일으킵니다.
+#4. scott 유져를 drop 합니다.
+#5. 양쪽 인스턴스를 모두 shutdown immediate 로 내립니다.
+#6. 한쪽 인스턴스만 mount 로 올립니다.
+#7. rman 으로 접속해서 time base 불완전 복구를 시도합니다.
+#8. scott 유져로 접속이 잘 되는지 확인합니다.
+#9. full backup 을 수행합니다.
+
+구현:
+#0. RMAN 으로 full backup 을 먼저 받습니다. 
+
+RMAN> backup  database; 
+
+#1. .bash_profile 에 시간을 설정하는 파라미터를 맨 아래에 추가해야합니다.
+
+1번 노드와 2번 노드 둘다 셋팅합니다.
+
+$ cd
+$ vi .bash_profile
+
+NLS_LANG=american_america.we8iso8859p15
+NLS_DATE_FORMAT='RRRR/MM/DD:HH24:MI:SS'
+export NLS_LANG
+export NLS_DATE_FORMAT
+
+$ source  .bash_profile
+
+#2. 현재 시간을 확인합니다.
+
+SQL#1> select  sysdate from dual;  
+
+SYSDATE
+-------------------
+2024/03/25:10:19:32      <---- 이렇게 나와줘야 제대로 된것입니다.
+
+#3. 로그 스위치를 2번 정도 일으킵니다.
+
+SQL#1> alter  system  switch  logfile;
+
+SQL#1> alter  system  switch  logfile;
+
+#4. scott 유져를 drop 합니다.
+
+SQL#1> drop  user  scott  cascade; 
+
+#5. 양쪽 인스턴스를 모두 shutdown immediate 로 내립니다.
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+#6. 한쪽 인스턴스만 mount 로 올립니다.
+
+SQL#1> startup  mount
+
+#7. rman 으로 접속해서 time base 불완전 복구를 시도합니다.
+
+$ rman  target  sys/oracle  nocatalog
+
+RMAN> run { set  until  time='2024/03/25:10:19:32';
+                  restore  database;
+                  recover  database;
+                  alter   database  open  resetlogs;
+                  }
+
+#8. scott 유져로 접속이 잘 되는지 확인합니다.
+
+#9. full backup 을 수행합니다.
+
+RMAN>  backup  database;
+
+RMAN> report  obsolete; 
+RMAN> delete  obsolete; 
+
+문제해결:    
+
+#1. ifconfig 를 해서 ip 주소가 변경되었는지 확인
+#2. ping 192.168.56.112 
+     ping 192.168.56.111
+#3. crs_stat -t         ---->  can not communication 이면 양쪽 다 reboot 
+#4. crs_stop -all
+     crs_start -all
+#5. 이래도 정상이 아니면 양쪽다 reboot 을 합니다.
+#6. 그래도 안되면 네트워크 지우고 다시 설정
+#7. 그래도 안되면 외장형 하드로 복사
+
+복구 실패했으면 SCOTT 유져를 다시 생성하세요 ~
+
+create  user  scott  
+ identified   by  tiger;
+
+grant  dba  to scott; 
+

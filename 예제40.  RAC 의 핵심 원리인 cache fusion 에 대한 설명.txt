@@ -1,0 +1,216 @@
+
+▣ 예제40.  RAC 의 핵심 원리인 cache fusion 에 대한 설명 
+
+면접질문:  rac 를 배우셨던데 rac 의 cache fusion 에 대해서 설명해주실 수 있으신가요?
+
+cache fusion ?  request node, master node, holder node 가 interconnect 를 통해
+                     block 또는 메세지를 교환하는 메커니즘 
+
+★ cache fusion 을 이해하기 위해 먼저 알아야할 용어 ?
+
+ 1.  request  node :   마스터 노드에게  블럭 전송을 요청하는 노드
+
+ 2.  master  node :   요청하는 데이터에 대한 위치정보가 있는 GRD 가 있는 노드
+
+ 3.  holder  node :    요청하는 데이터에 대한 실제 데이터 블럭을 가지고 있는 노드
+
+ 4.  null  mode    :  락을 거는 건데 내가 확보한 빈 메모리 공간을 누구도 덮어쓰지 
+                           못하게 거는 락
+ 
+ 5.  shared  mode :   비어있는 상태는 아니고 데이터가 있는 상태인데  그 누구도
+                            덮어쓰지 못하게 거는 락 
+
+ 6. exclusive  mode :  데이터가 update 가 된 상태의 버퍼에 거는 락입니다. 
+
+
+★ cache  fusion 의 예제 6가지 ?
+
+   cache fusion 이란 내가 어느 노드로 접속하든 관계없이 항상 최신 데이터를 
+   볼 수 있게 해주는 rac 메커니즘 
+
+1.  initial   read    with  no  transfer
+2.  read  to  read   with  transfer
+3.  read  to  write  with  transfer
+4.  write  to  read   with   transfer (commit 이후)
+5.  write  to  read   with   transfer (commit 이전)
+6.  write  to  write  with  transfer
+
+■  1.  initial   read    with  no  transfer  실습
+
+1.  실습 환경을 먼저 조성합니다.
+
+ SQL#1> drop  table rac_test;
+
+ SQL#1>  create  table  rac_test
+               ( id   number ); 
+
+ SQL#1>  insert  into  rac_test  values(1);
+  
+ SQL#1>  commit;
+
+ SQL#1>  alter  system  flush  shared_pool;
+ SQL#1>  alter  system  flush  buffer_cache;
+
+ SQL#2>  alter  system  flush  shared_pool;
+ SQL#2>  alter  system  flush  buffer_cache;
+
+-- rac_test 테이블의 파일 번호와 블럭 번호를 확인 합니다.
+
+ SQL#1> select  dbms_rowid.rowid_relative_fno(rowid) as fno,
+             dbms_rowid.rowid_block_number(rowid) as blkno
+           from rac_test;
+
+       FNO      BLKNO
+---------- ----------
+         1      94513   <--- rac_test 테이블의 파일 번호와 블럭번호
+                                 를 알아내는 명령어 
+
+ SQL#1> @flush
+ SQL#2> @flush
+
+  SQL#1>  select  b.lock_element_addr, b.status, e.mode_held, e.local
+               from  v$bh  b, v$gc_element  e
+             where  b.file#=1  and b.block#=94513
+             and  b.lock_element_addr=e.gc_element_addr;
+
+       status    mode_hold    local 
+       xcur   <--------------------------- exclusive 모드 
+       scur   <----------------------------shared  모드  
+   no row select  <------------------------ null 모드  
+
+SQL#1> alter  system  flush  buffer_cache;
+SQL#2> alter  system  flush  buffer_cache;
+
+
+■  1. initial  read  with no transfer
+
+ 1.  SQL#1> @rac_test.sql
+
+  no rows selected  <--  null  mode
+
+ 2. SQL#1> select * from rac_test;
+
+ 3. SQL#1> @rac_test.sql 
+ 
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD      LOCAL
+---------------- ---------- ---------- ----------
+000000008FFA1028 scur                1          1
+
+설명: 1번 노드가 공유 디스크에서 데이터를 직접 읽어들이고 
+       shared mode 로 락을 보유하고 있는 상태입니다.
+
+■ 2. read  to  read  with  transfer
+
+SQL#1> @rac_test.sql
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD      LOCAL
+---------------- ---------- ---------- ----------
+000000008FFA1028 scur                1          1
+
+SQL#2> select * from rac_test; 
+
+SQL#2> @rac_test
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD      LOCAL
+---------------- ---------- ---------- ----------
+000000008EF97E18 scur                1          1
+
+
+SQL#1> @rac_test
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD      LOCAL
+---------------- ---------- ---------- ----------
+000000008FFA1028 scur                1          1
+
+
+문제1. 다음 캐쉬퓨젼 메커니즘 3번의 경우를 실험하시오 
+
+3.  read  to  write  with  transfer  <--- 이걸 실험합니다.
+
+SQL#1> @flush
+
+SQL#1> @rac_test
+
+no row select
+
+SQL#2> select * from rac_test;
+
+SQL#2> select * from rac_test;
+
+SQL#2> @rac_test
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD      LOCAL
+---------------- ---------- ---------- ----------
+000000008EF6BA58 scur                1          1
+
+SQL#1> update  rac_test
+              set  id = 10;
+
+SQL#1> @rac_test
+
+LOCK_ELEMENT_ADD STATUS      MODE_HELD                      LOCAL
+---------------- ---------- ---------- -----                -----
+000000008EF79E58 xcur                2     1
+
+SQL#2>  @rac_test
+
+no rows selected
+
+설명: 1번 노드에서 update 를 수행했기 때문에 rac_test 블럭에 대해서 독점적인(exclusive)
+       락이 획득됩니다.  이 독점적인 락은 모든 노드에 딱 1개에만 존재합니다.
+       그리고 나머지 노드는 null 모드로 다운그레이드 되어집니다. 
+
+※ 1번 노드가 commit 을 안했기 때문에 2번 노드가 계속해서 rac_test 테이블을 조회해도
+   null 모드입니다.
+
+SQL#2> select * from rac_test;
+
+        ID
+----------
+         1
+
+SQL#2> @rac_test
+
+no rows selected  <---  null 모드란 애기는 계속해서 select 할 때마다 전송받아야된다는
+                               것입니다. 
+
+※ RAC 환경에서는 특히 commit 을 빼먹으면 안됩니다. 
+   계속 노드간의 데이터 전송이 빈번해지면 rac 성능이 느려집니다. 
+
+4. Write-to-Read With Transfer (Commit 이후)
+
+
+설명:   1번노드가 exclusive mode 로 락을 보유하고 있고 
+          2번 노드는 null 모드인 상태입니다.  
+          이 상태에서 2번 노드가 rac_test 테이블을 select 를 한번 했다고 해서 바로
+          shared mode 가 되지는 않습니다.  2번을 요청해야 shared mode 가 됩니다. 
+
+■ 실습 
+
+SQL#1>  @flush 
+SQL#2>  @flush 
+
+SQL#1> update  rac_test  set id =17;
+SQL#1> commit;
+SQL#1> @rac_test 
+
+SQL#2> select * from rac_test;
+SQL#2> @rac_test
+
+SQL#2> select * from rac_test;
+SQL#2> @rac_test
+
+■  5. Write-to-Read With Transfer (Commit 이전)
+
+
+설명:  1번 노드가 rac_test 데이터를 update 를 하고 commit 을 안했습니다.
+         그런데 2번 노드가 계속해서 rac_test 데이터를 select 를 합니다.
+         그러면 2번 노드는 rac_test 테이블의 변경 이전 데이터를 봐야합니다. 
+         그래서 만약 dbwr 가 cr buffer 를 data file 의 undo tablespace 에 안내려셨다면
+         cr buffer 가 전송이 되어지고 cr buffer 에 있는 이전 데이터를 2번 노드가 select
+         를 합니다. 그런데 만약 dbwr 가 cr buffer 를 undo tablespace 에 내려썼으면
+         cr buffer 를 2번 노드에 전송하고  직접 undo tablespace에서 데이터를 읽어서
+         cr buffer 에 적용하고 select 를 합니다. 
+
+※ RAC 에서는 자주 COMMIT 을 수행하는게 바람직 합니다. 

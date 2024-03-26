@@ -1,0 +1,155 @@
+▣ 예제31.  RAC 환경에서  cancel base 불완전 복구하기 
+
+ 이 복구 방법은 standard alone 과 다릅니다. 
+
+rac 환경에서 thread 번호 설명 그림: https://cafe.daum.net/oracleoracle/SoJX/124
+
+■ 실습
+#1. RMAN 으로  full backup 을 먼저 수행합니다.
+#2. 로그 스위치를 2번 일으킵니다.
+#3. 체크 포인트를 일으킵니다.
+#4. current 리두 로그 그룹이 뭔지 확인합니다.
+#5. 1번 인스턴스용 리두 로그 그룹을 하나 추가합니다.
+#6. 2번 인스턴스용 리두 로그 그룹을 하나 추가합니다.
+#7. 각각의 노드에서 로그 스위치를 2번 일으킵니다.
+#8. 체크 포인트를 수행합니다. 
+#9. 리두 로그 그룹의 상태를 확인합니다. 
+#10. controlfile 을 생성하는 스크립트를 생성합니다. 
+#11. 1번 인스턴스의 current redo log 그룹이 뭔지 확인합니다.
+#12. current redo log group 의 멤버가 뭔지 확인합니다.
+#13. 양쪽 인스턴스를 shutdown immediate 로 내립니다.
+#14. amscmd 로 접속해서 current 리두 로그 그룹의 멤버를 모두 삭제합니다.
+#15. 1번 인스턴스를 startup 합니다. 
+#16. rman 으로 접속합니다. 
+#17. cancel base 불완전 복구를 시도합니다. 
+#18. 다른 인스턴스를 startup 시킵니다.
+#19. 기존 rman 을 빠져나왔다가 다시 접속해서 full backup 을 수행합니다. 
+
+구현: 
+#1. RMAN 으로  full backup 을 먼저 수행합니다.
+RMAN> backup  database  include  current  controlfile;
+
+#2. 로그 스위치를 2번 일으킵니다.
+SQL#1> alter  system  switch  logfile; 
+SQL#1> alter  system  switch  logfile; 
+
+#3. 체크 포인트를 일으킵니다.
+SQL#1> alter  system  checkpoint;
+
+#4. current 리두 로그 그룹이 뭔지 확인합니다.
+SQL#1> select  group#, sequence#, status#, thread#
+             from v$log;
+
+※ thread# 이 무엇인가?  어느 인스턴스의 리두 로그 그룹인지를 나타내기 위한 숫자
+
+#5. 1번 인스턴스용 리두 로그 그룹을 하나 추가합니다.
+
+SQL#1> alter  database   add  logfile  thread  1  group   그룹번호;
+
+#6. 2번 인스턴스용 리두 로그 그룹을 하나 추가합니다.
+
+SQL#2> alter  database   add  logfile  thread  2  group   그룹번호;
+
+#7. 각각의 노드에서 로그 스위치를 2번 일으킵니다.
+
+SQL#1> alter system switch  logfile;
+SQL#1> alter system switch  logfile;
+SQL#2> alter system switch  logfile;
+SQL#2> alter system switch  logfile;
+
+#8. 두 노드에서 각각 체크 포인트를 수행합니다. 
+
+SQL#1> alter  system  checkpoint;
+SQL#2> alter  system  checkpoint;
+
+#9. 리두 로그 그룹의 상태를 확인합니다. 
+SQL#1> select  group#, status, sequence#, thread#
+             from  v$log;
+
+ GROUP# STATUS            SEQUENCE#    THREAD#
+---------- ---------------- ---------- ----------
+         1 INACTIVE                  3          1
+         2 CURRENT                   5          1  <---  이걸 깨트릴겁니다.
+         3 INACTIVE                   4          2
+         4 CURRENT                   5          2
+         5 INACTIVE                  4          1
+         6 INACTIVE                  3          2
+
+#10. controlfile 을 생성하는 스크립트를 생성합니다. 
+
+SQL#1> alter  database  backup  controfile  to trace  as  '/home/oracle/c9.sql';
+
+#11. 1번 인스턴스의 current redo log 그룹이 뭔지 확인합니다.
+
+SQL#1> select  group#, status, sequence#, thread#
+             from  v$log;
+
+ GROUP# STATUS            SEQUENCE#    THREAD#
+---------- ---------------- ---------- ----------
+         1 INACTIVE                  3          1
+         2 CURRENT                   5          1  <---  이걸 깨트릴겁니다.
+         3 INACTIVE                   4          2
+         4 CURRENT                   5          2
+         5 INACTIVE                  4          1
+         6 INACTIVE                  3          2
+
+
+#12. current redo log group 의 멤버가 뭔지 확인합니다.
+
+SQL#1> select group#, member  from v$logfile;
+
+        2
++DATA/racdb/onlinelog/group_2.262.1152284451
+
+         2
++FRA/racdb/onlinelog/group_2.258.1152284451
+
+
+#13. 양쪽 인스턴스를 shutdown immediate 로 내립니다.
+
+SQL#1> shutdown  immediate
+SQL#2> shutdown  immediate
+
+#14. amscmd 로 접속해서 current 리두 로그 그룹의 멤버를 모두 삭제합니다.
+
+$ su - grid
+$ asmcmd 
+ASMCMD> 
+
+아래의 위치로 가서 둘다 rm 으로 지웁니다.
++DATA/racdb/onlinelog/group_2.262.1152284451
++FRA/racdb/onlinelog/group_2.258.1152284451
+
+#15. 1번 인스턴스를 startup 합니다. 
+
+SQL#1> startup
+
+올라오다가 갑자기 communication 이 끊겼다고 하면서 에러가 나면
+다시 오라클 sys 유져로 접속하고  shutdown abort 했다가 startup mount 하면
+됩니다.
+
+#16. rman 으로 접속합니다. 
+
+RMAN>  list  incarnation;  
+
+현재 incarnation 번호를 확인해야합니다.  status 가 current 인것의 incarnation 번호
+불완전 복구를 여러번했기 때문에 예전에 불완전 복구하기전 db 인지 
+아니면 현재 db 인지를 구분해주기 위한 번호가 incaration 번호입니다. 
+
+RMAN> reset  database  to  incarnation  번호;
+
+#17. cancel base 불완전 복구를 시도합니다. 
+
+RMAN> run {  set  until   sequence  번호  thread  1;
+                    restore  database;
+                    recover  database;
+                 }
+
+RMAN> alter  database  open  resetlogs; 
+
+#18. 다른 인스턴스를 startup 시킵니다.
+
+SQL#2>  startup 
+
+#19. 기존 rman 을 빠져나왔다가 다시 접속해서 full backup 을 수행합니다. 
+

@@ -1,0 +1,159 @@
+▣ 예제23.  RAC 환경에서 전자지갑 사용하는 방법  
+
+전자지갑의 용도 ?
+
+특정 데이터를 보호하기 위한 용도로 쓰입니다. 
+어떤 중요한 컬럼을 엑세스 하지 못하게 할 때 사용을 합니다.
+
+■ 실습 
+
+- rac 환경에서 전자지갑 사용 테스트
+
+1.   1번 노드에서 전자지갑이 생성될 위치를 결정해준다.
+
+ sqlnet.ora 안에  아래의 내용을 입력한다.
+
+$ cd $ORACLE_HOME/network/admin
+$ vi sqlnet.ora
+
+ENCRYPTION_WALLET_LOCATION=
+  (SOURCE=(METHOD=FILE)(METHOD_DATA=
+   (DIRECTORY=/u01/app/oracle/product/11.2.0/db_1)))
+
+2.  1번 노드에서 전자지갑을 생성한다. 
+    
+SQL#1>  alter  system   set  encryption  key
+             identified   by  oracle1234;  
+
+$ cd  $ORACLE_HOME
+$ ls  -l   ewallet.p12    <--- 전자지갑 
+
+3. scott 유져에서 emp100 을 생성하고  emp100 의 sal 컬럼을 암호화 하시오 ~
+  
+[oracle@racdb1 ~]$ sqlplus scott/tiger
+
+SQL#1>  create  table  emp100  as  select  * from  emp;
+
+SQL#1> alter  table  emp100  modify  sal  encrypt; 
+
+SQL#1> select ename, sal  from  emp100; 
+                          
+       지금은 조회가 됩니다. 
+
+SQL#1> connect  /  as sysdba
+
+전자지갑을 엽니다. 
+SQL#1> alter  system  set  encryption   wallet  open
+           identified  by  oracle1234;
+
+양쪽 인스턴스를 모두 내렸다 올립니다.
+
+
+전자 지갑을 닫습니다.
+SQL#1> alter  system  set  encryption  wallet  close
+            identified  by oracle1234;
+
+ERROR at line 1:
+ORA-28365: wallet is not open
+
+db 를 내렸다 올리니까 자동으로 닫혔습니다.
+
+scott 으로 접속해서 emp 테이블의 월급을 조회합니다.
+
+SQL#1> connect scott/tiger
+          
+SQL#1> select  ename, sal  from  emp100; 
+            
+ERROR at line 1:
+ORA-28365: wallet is not open
+
+전자 지갑이 열려있지 않다고 하면서 조회가 안됩니다. 
+sys 유져로 접속해서 전자지갑을 열어줍니다.
+
+SQL#1> connect  / as sysdba
+SQL#1> alter  system  set  encryption  wallet  open
+            identified  by oracle1234;
+
+SQL#1> connect  scott/tiger
+SQL#1> select  ename, sal  from  emp100; 
+       
+ 조회가 됩니다. 
+
+2번노드에서 scott 으로 접속해서 emp100 테이블을 조회해봅니다.
+ 
+SQL#2> connect scott/tiger
+
+SQL#2> select ename,sal   from emp100;          
+
+   ORA-28365: wallet is not open
+
+전자지갑이 닫혀있어서 안보입니다. 볼려면 전자지갑을 열어야합니다.
+그럴려면 2번 노드에 전자지갑이 있어야합니다. 
+
+전자지갑을 1번 노드에서 2번 노드로 copy 해준다. 
+
+scp 명령어는 네트워크를 통해서 다른 컴퓨터로 파일을 copy 하는 리눅스 명령어입니다.
+
+$  cd $ORACLE_HOME
+
+$  scp   ewallet.p12   rac2:/u01/app/oracle/product/11.2.0/db_1
+
+ 또는 
+
+$  scp   ewallet.p12   192.168.56.112:/u01/app/oracle/product/11.2.0/db_1
+
+설명: scp  파일명  호스트명:복사할 위치
+ 
+2번노드에 /u01/app/oracle/product/11.2.0/db_1 에 전자지갑이 잘 카피되었는지 확인
+
+2번 노드에 sqlnet.ora 에 전자지갑의 위치를 기록합니다. 
+
+$ cd $ORACLE_HOME/network/admin   <--- 2번 노드에도 sqlnet.ora 생성
+$ vi sqlnet.ora
+
+ENCRYPTION_WALLET_LOCATION=
+  (SOURCE=(METHOD=FILE)(METHOD_DATA=
+   (DIRECTORY=/u01/app/oracle/product/11.2.0/db_1)))
+
+SYS 유져에서 전자지갑을 엽니다. 
+
+SQL#2> alter  system  set  encryption  wallet  open
+              identified  by  oracle1234;
+
+SCOTT 으로 접속해서 emp100 테이블을 조회해 봅니다.
+
+SQL#2>  connect scott/tiger
+
+SQL#2>  select  ename, sal  from  emp100; 
+
+문제1.  2번노드에 전자지갑을 닫으시오 !
+
+답: 
+
+SQL#2> connect / as sysdba
+
+SQL#2> alter  system  set  encryption  wallet  close
+              identified  by  oracle1234;
+
+문제2. scott 유져로 접속해서 emp100 테이블에서 ename과 job 을 조회하시오 !
+
+답:
+SQL#2> connect scott/tiger
+
+SQL#2> select  ename, job  from emp100;
+
+sal를 암호화 해서 조회가 안되는거지 다른 컬럼들은 조회가 됩니다.
+
+문제3. scott 유져에서  sal 월급을 다시 decrypt 하시오 !
+
+SQL#2> connect  / as sysdba 
+
+SQL#2> alter  system  set  encryption  wallet  open
+            identified  by  oracle1234;
+
+SQL#2> connect  scott/tiger 
+
+SQL#2>  alter   table  emp100   modify   sal  decrypt; 
+
+SQL#2>  select  ename, sal from emp100;
+

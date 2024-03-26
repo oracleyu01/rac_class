@@ -1,0 +1,117 @@
+
+▣ 예제38.  RAC 튜닝 중 interconnect  traffic 튜닝
+
+  interconnect  의 부하로 인해서 성능이 느려지는 원인이 발생하지 않도록 튜닝
+
+ 1. 인터커넥트 하드웨어를 비싼걸로 사용한다. 
+
+  - 1gb 비트 이더넷  : 초당 125mb 전송속도 보장
+  - 10gb 비트 이더넷
+  - 100gb 비트 이더넷(인피니 밴드)  <--- 요즘 rac 19c 구현하는 곳은 대부분 사용 
+
+ 2.  innterconnect  ip 가 private ip 로 셋팅되어있는게 맞는지 확인해야합니다.
+
+   가끔 public ip 로 셋팅해놔서 느려지는 경우가 종종 있습니다. 
+
+   * RAC 에서 사용하는 IP 주소 4가지 ?
+
+  1. public  ip   :  외부에서 rac 로 접속할 때 사용하는 ip
+  2. private ip   :  interconnect 를 통해 통신할 때 사용하는 ip
+  3. virtural ip   :  failover 를 할 때 사용하는 ip
+  4. scan  ip      :  스캔 리스너가 사용하는 ip
+
+■  실습
+
+#1. interconnet ip 가 private ip 가 맞는지 확인하기
+
+$  oifcfg  getif 
+
+eth0  10.0.2.0  global  public
+eth1  192.168.56.0  global  cluster_interconnect
+
+$ oifcfg  iflist  -p -n 
+
+eth0  10.0.2.0  PRIVATE  255.255.255.0
+eth1  192.168.56.0  PRIVATE  255.255.255.0
+eth1  169.254.0.0  UNKNOWN  255.255.0.0
+
+#2. 디버깅을 이용해서 interconnect ip 가 private ip 가 맞는지 확인하는 방법
+
+$ cat  /etc/hosts 
+
+### Public
+10.0.2.15  rac1
+10.0.2.16  rac2
+### Private
+192.168.56.111  rac1-priv
+192.168.56.112  rac2-priv
+### Virtual
+10.0.2.111  rac1-vip
+10.0.2.112  rac2-vip
+### SCAN
+10.0.2.120  rac-scan
+
+SQL#1>  oradebug  setmypid     
+
+SQL#1>  oradebug  ipc  
+
+SQL#1>  oradebug  tracefile_name 
+
+/u01/app/oracle/diag/rdbms/racdb/racdb1/trace/racdb1_ora_9800.trc
+
+$  vi  /u01/app/oracle/diag/rdbms/racdb/racdb1/trace/racdb1_ora_9800.trc
+
+ SKGXPGPID Internet address   169.254.215.245   UDP   port number 43023, mask 16
+
+11gR2 부터는 인터커넥트 아이피가 /etc/hosts 의 private ip와 다르게 나옵니다.
+11gR2 부터 제공하는 HAIP 를 사용하고 있다고 보면됩니다. 
+
+169.254.215.245 가  interconnect 아이피가 맞는지를 확인해보면됩니다.
+
+select  inst_id, name, ip_address, is_public
+  from   gv$cluster_interconnects
+  order  by  inst_id  asc; 
+
+ INST_ID NAME            IP_ADDRESS       IS_PUBLIC
+---------- --------------- ---------------- ---
+         1 eth1:1          169.254.215.245  NO
+         2 eth1:1          169.254.213.137  NO
+
+설명: interconnect 아이피가 public ip 가 아니다라는 것을 확인을 했습니다.
+
+#3.  MTU 사이즈를 확인해야합니다. 
+
+  MTU ?  하드웨어적으로 한번에 네트워크를 통해서 전송할 수 있는 패킷의 최대크기 
+             이 값이 1500 이거나 그 이상으로 되어있는지 확인해야 합니다.
+
+ $ netstat  -i
+
+#4. LMS 프로세서의 친절도(NICE) 를 확인해야합니다.
+
+ LMS 프로세서의 역활 ?  노드간의 데이터 전송하는 프로세서
+
+ 친절도(nice) ?  cpu 를 다른 프로세서에게 양보하는 친절도(-20 ~ 20)
+
+ $ ps - ef |  grep  lms
+
+  ora_lms0_racdb1
+
+  프로세서 번호 확인 ?  8028
+
+ $ top -p  8028
+
+ root 로 접속해서 친절도를 -20 으로 변경합니다.
+
+  # renice  -20  -p  8028
+
+  # top -p  8028
+
+점심시간 문제.  ora_lms1_racdb1  의 프로세서의 친절도를 -20 으로 변경하시오 !
+
+정리:  interconnect traffic 튜닝의 4가지 요소는 ?
+
+      1.  인터 커넥트의 하드웨어가 인피니밴드로 되어있는지 확인
+      2.  인터커넥트 아이피 주소가 private ip 또는 HAIP 로 되어있는지 확인
+      3.  MTU 사이즈 1500 으로 되어있는지
+      4.  LMS 프로세서의 친절도를 낮추겠금 설정 
+

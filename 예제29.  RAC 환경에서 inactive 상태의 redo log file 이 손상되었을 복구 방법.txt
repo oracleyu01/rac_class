@@ -1,0 +1,150 @@
+▣ 예제29.  RAC 환경에서 inactive 상태의 redo log file 이 손상되었을 복구 방법
+
+리두 로그 파일의 상태 4가지 ?
+
+ 1.  current   : 현재 LGWR 가 쓰고 있는 상태         ------>  불완전 복구
+ 2.  active    :  다 썼는데 checkpoint 가 완료 안된 상태 ---> 불완전 복구 
+ 3.  inactive :   다 썼고 checkpoint 도 완료된 상태   --->  완전 복구
+ 4.  unused  :  한번도 사용한적이 없는 상태          --->   완전 복구
+
+■ 실습
+순서
+#1. 1번 인스턴스용 리두 로그 그룹을 4개로 만듭니다.
+#2. 1번 인스턴스에서 로그 스위치를  2번 일으키고 체크포인트를 일으킵니다.
+#3. 2번 인스턴스용 리두 로그 그룹을 4개로 만듭니다.
+#4. 2번 인스턴스에서 로그 스위치를  2번 일으키고 체크포인트를 일으킵니다.
+#5. 1번 인스턴스용 리두 로그 그룹중에 inactive 상태의 리두 로그 그룹번호를 알아냅니다.
+#6. 5번에서 확인한 inactive 상태의 리두 로그 파일의 멤버를 알아냅니다. 
+#7. 양쪽 인스턴스를 shutdown abort 를 내립니다. 
+#8. grid 유져로 접속해서 asmcmd 모드로 접속합니다.
+#9. inactive 상태의 리두 로그 그룹의 멤버를 모두 삭제합니다.
+#10. oracle 유져로 로그인해서 startup 을 합니다. 
+#11. 손상된 리두 로그 그룹의 상태를 확인합니다. 
+#12. 손상된 그룹이 inactive 상태이면 그 그룹번호를 controlfile 에서 지워버립니다.
+#13. db 를 open 시킵니다. 
+#14. 새롭게 리두 로그그룹을 추가합니다.
+#15. 2번 인스턴스를 startup 합니다.
+
+구현:
+#1. 1번 인스턴스용 리두 로그 그룹을 4개로 만듭니다.
+
+SQL#1>  select group#, status, sequence#, thread#
+              from v$log;
+
+SQL#1> alter  database  add  logfile  thread  1 group  5;   
+SQL#1> alter  database  add  logfile  thread  1 group  6  ; 
+
+SQL#1>  select group#, status, sequence#, thread#
+              from v$log;
+
+#2. 1번 인스턴스에서 로그 스위치를  2번 일으키고 체크포인트를 일으킵니다.
+
+SQL#1> alter  system  switch  logfile ;
+SQL#1> alter  system  switch  logfile ;
+SQL#1> alter  system  checkpoint;
+
+#3. 2번 인스턴스용 리두 로그 그룹을 4개로 만듭니다.
+
+SQL#2>  select group#, status, sequence#, thread#
+              from v$log;
+
+SQL#2> alter  database  add  logfile  thread  2 group  7;   
+SQL#2> alter  database  add  logfile  thread  2 group  8; 
+
+SQL#2>  select group#, status, sequence#, thread#
+              from v$log;
+
+#4. 2번 인스턴스에서 로그 스위치를  2번 일으키고 체크포인트를 일으킵니다.
+
+SQL#1> alter  system  switch  logfile ;
+SQL#1> alter  system  switch  logfile ;
+SQL#1> alter  system  checkpoint;
+
+#5. 1번 인스턴스용 리두 로그 그룹중에 inactive 상태의 리두 로그 그룹번호를 알아냅니다.
+
+SQL#1>  select group#, status, sequence#, thread#
+              from v$log;
+
+설명: 1번이 inactive 상태 입니다
+
+#6. 방금 확인한 inactive 상태의 리두 로그 파일의 멤버를 알아냅니다. 
+
+SQL#1> select  group#, member  from v$logfile ;
+
+         1
++DATA/racdb/onlinelog/group_1.261.1150862633
+
+         1
++FRA/racdb/onlinelog/group_1.257.1150862633
+
+
+#7. 양쪽 인스턴스를 shutdown abort 를 내립니다. 
+
+
+#8. grid 유져로 접속해서 asmcmd 모드로 접속합니다.
+
+[oracle@racdb1 ~]$ su - grid
+암호:
+[grid@+ASM1 ~]$ asmcmd
+
+#9. inactive 상태의 리두 로그 그룹의 멤버를 모두 삭제합니다.
+
+         1
++DATA/racdb/onlinelog/group_1.261.1150862633
+
+         1
++FRA/racdb/onlinelog/group_1.257.1150862633
+
+#10. oracle 유져로 로그인해서 startup 을 합니다. 
+
+
+#11. 손상된 리두 로그 그룹의 상태를 확인합니다. 
+
+SQL#1> select  group#, status, sequence#, thread#
+                from v$log;
+
+#12. 손상된 그룹이 inactive 상태이면 그 그룹번호를 controlfile 에서 지워버립니다.
+
+SQL#1> alter  database  drop  logfile  group  1; 
+
+ORA-01623: log 1 is current log for instance racdb1 (thread 1) - cannot drop
+
+inactive 상태인데 current 라고 하면 안된다고 하면 일단 다음과 같이합니다. 
+
+SQL#1> alter database  clear unarchived logfile group 1;
+
+SQL#1> select group#, status, thread# from v$log;
+
+#13. db 를 open 시킵니다. 
+
+SQL#1> alter database  open ;
+
+#14. 새롭게 리두 로그그룹을 추가합니다.
+
+앞에서 아래의 명령어로 drop 이 성공했으면 다음과 같이 추가하고 
+
+SQL#1> alter  database  drop  logfile  group  1; 
+
+clear unarchived 로 성공했으면 이미 추가된거니까 안해도됩니다.
+
+#15. 2번 인스턴스를 startup 합니다.
+
+SQL#2> startup
+
+오늘의 마지막 문제. (RAC 이수자 평가 2번 문제)
+
+리두 로그 그룹의 상태를 다음과 같이 1번 3개, 2번 3개로 구성해 놓으시오 !
+그리고 화면 캡쳐해서 답글로 달고 이수자 평가 답으로 보관하고 있으세요.
+GROUP 번호가 화면과 똑같이 않아도 됩니다.
+
+SQL#1> @logfile
+
+    GROUP# STATUS            SEQUENCE#    THREAD#
+---------- ---------------- ---------- ----------
+         1 CURRENT                  62           1
+         2 INACTIVE                  60           1
+         3 INACTIVE                  62          2
+         4 UNUSED                    0          2
+         5 INACTIVE                  61          1
+         7 CURRENT                  63          2
+

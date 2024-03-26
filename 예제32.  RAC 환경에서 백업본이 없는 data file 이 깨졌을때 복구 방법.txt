@@ -1,0 +1,126 @@
+▣ 예제32.  RAC 환경에서 백업본이 없는 data file 이 깨졌을때 복구 방법
+
+ 아카이브 모드이기만 하면 백업본이 없어도 복구를 할 수 있습니다.
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/126
+
+■ 실습
+#1. ts51 테이블 스페이스를 생성합니다.
+#2. ts51 테이블 스페이스에 emp51 테이블을 scott 유져에서 생성합니다.
+#3. 데이터를  emp51 테이블에 입력하고 로그 스위치를 일으킵니다.(3번반복)
+#4. 양쪽 노드를 둘다 shutdown  abort
+#5. asmcmd 로 가서 ts51 테이블 스페이스의 datafile 을 rm 으로 삭제
+#6. 한쪽 노드만 startup
+#7. 복구해야할 파일이 뭔지 조회를 합니다.
+#8. 알맨으로 접속합니다.
+#9. 문제가 되는 datafile 을 복원합니다.
+#10. 문제가 되는 datafile 을 복구 합니다.
+#11. emp51 테이블이 잘 조회되는지 확인합니다. 
+#12. 나머지 인스턴스를 startup 시킵니다. 
+
+구현:
+#1. ts51 테이블 스페이스를 생성합니다.
+SQL#1>  create  tablespace  ts51  datafile  '+data'  size  10m;
+
+SQL#1> select  tablespace_name, file_name from dba_data_files;
+
++DATA/racdb/datafile/ts51.274.1164549315
+
+#2. ts51 테이블 스페이스에 emp51 테이블을 scott 유져에서 생성합니다.
+
+SQL#1> connect scott/tiger
+
+SQL#>  create  table  emp51
+           ( empno   number(10),
+             ename   varchar2(10) )
+            tablespace  ts51;   
+
+#3. 데이터를  emp51 테이블에 입력하고 로그 스위치를 일으킵니다.(3번반복)
+
+SQL#1> insert  into  emp51  values(1111,'aaa');
+SQL#1> alter  system switch logfile;
+
+SQL#1> insert  into  emp51  values(1111,'aaa');
+SQL#1> alter  system switch logfile;
+
+SQL#1> insert  into  emp51  values(1111,'aaa');
+SQL#1> alter  system switch logfile;
+
+
+#4. 양쪽 노드를 둘다 shutdown  abort
+
+#5. asmcmd 로 가서 ts51 테이블 스페이스의 datafile 을 rm 으로 삭제
+
+$ su - grid
+$ asmcmd 
+ASMCMD> 
+
++DATA/racdb/datafile/ts51.274.1164549315
+
+#6. 한쪽 노드만 startup
+$ su - oracle
+SQL#1> startup
+
+#7. 복구해야할 파일이 뭔지 조회를 합니다.
+
+SQL#1> select *
+     from v$recover_file;
+
+#8. 알맨으로 접속합니다.
+
+$ rman target sys/oracle nocatalog
+
+#9. 문제가 되는 datafile 을 복원합니다.
+
+RMAN> restore  datafile  9;   
+
+creating datafile file number=9 name=+DATA/racdb/datafile/ts51.274.1164549315
+
+※ 실제로 백업본이 없기때문에 빈 파일을 생성을 합니다.
+
+#10. 문제가 되는 datafile 을 복구 합니다.
+
+RMAN> recover  datafile  9; 
+
+RMAN> alter database open;
+
+#11. emp51 테이블이 잘 조회되는지 확인합니다. 
+
+$ sqlplus scott/tiger
+
+SQL#1> select * from emp51;
+
+#12. 나머지 인스턴스를 startup 시킵니다. 
+
+문제1.  다시 한번 ts51 테이블 스페이스의 데이터 파일을 삭제하고 복구하는데
+          이번에는 db 를 open 으로 올려놓고 복구하시오 !
+
+  방금한 실습은 mount 에서 복원과 복구를 했는데  서비스가 빨리 되는게 
+  중요하니까 open 시키고 복원, 복구를 하시오 !
+
+startup 해서 안올라오면 ?
+
+SQL#1> select * from v$recover_file;
+SQL#1> alter  database  datafile  번호 offline;
+SQL#1> alter  database open;
+RMAN> restore  datafile  9;
+RMAN> recover  datafile  9;
+SQL#1> alter  database  datafile  번호 online;
+
+문제2. 백업본이 없는 파일이 여러개일 때도 복구가 되는지 테스트 하시오 !
+
+SQL#1>  create  tablespace  ts52   datafile '+data'  size  10m;
+SQL#1>  connect scott/tiger
+SQL#1>  create  table  emp52
+             tablespace   ts52
+            as
+               select  * from  emp;
+SQL#1> alter  system  switch  logfile;
+SQL#1> alter  system checkpoint;
+
+양쪽 인스턴스를 모두 shutdown abort 합니다.
+asmcmd 로 가서 ts51 과 ts52 테이블 스페이스의 datafile 을 2개를 삭제
+
+그리고 복구하세요 !
+
+

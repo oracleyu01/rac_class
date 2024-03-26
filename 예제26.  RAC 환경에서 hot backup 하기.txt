@@ -1,0 +1,17 @@
+▣ 예제26.  RAC 환경에서 hot backup 하기 
+
+hot backup 이란 db 운영중에 백업하는 것을 말합니다. 
+양쪽 노드 둘다 내리지 않고 그냥 백업을 하는것입니다.
+아카이브 모드여야지만 hot backup 이 가능합니다.
+
+■ 실습 
+
+#1.  checkpoint 를 global 하게 발생 시킵니다.
+
+SQL#1> alter  system  checkpoint  global;
+
+#2.  RMAN 으로 hot backup 을 수행합니다. 
+
+$ rman  target  sys/oracle   nocatalog
+
+RMAN>  backup  database; 

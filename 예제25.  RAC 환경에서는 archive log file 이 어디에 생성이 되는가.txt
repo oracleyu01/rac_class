@@ -1,0 +1,76 @@
+
+▣ 예제25.  RAC 환경에서는 archive log file 이 어디에 생성이 되는가 ?
+
+그림 : https://cafe.daum.net/oracleoracle/SoJX/98
+
+설명:  
+만약에  공유 스토리지가 raw device 면 아카이브 로그 파일은 로컬노드에
+파일 시스템에 생성됩니다.  그러면 나중에 복구할 때 한쪽 노드로 아카이브 로그파일을
+모아줘야 합니다. 아니면 NFS(Network File System) 을 구축하면 안모아도 됩니다.  
+
+그런데 공유 스토리지가 ASM 이면 아카이브 로그 파일은 공유 스토리지 쪽에
+생성이 됩니다.  그리고 나중에 복구할 때 한쪽 노드로 모을 필요없이 그냥 그대로 사용하면
+됩니다. 
+
+■ 실습:
+#1.  1번 노드에서 아카이브 로그 파일이 생성되는 위치를 확인합니다.
+
+SQL#1> select  name  from v$archived_log;
+
+#2.  2번 노드에서 아카이브 로그 파일이 생성되는 위치를 확인합니다.
+
+SQL#2> select  name  from v$archived_log;
+
+thread 번호 1번은 1번 인스턴스용 아카이브 로그 파일이고 
+thread 번호 2번은 2번 인스턴스용 아카이브 로그 파일입니다. 
+둘다 FRA 디스크 그룹에 있습니다. 
+
+#3.  1번노드에서 로그 스위치를 일으킵니다.
+
+SQL#1> alter  system  switch  logfile; 
+
+#4.  아카이브 로그 파일이 생성되었는지 확인합니다.
+
+SQL#1> select  name  from v$archived_log;
+
+문제1.  아카이브 로그 파일이 생성되는 FRA 디스크 그룹의 여유 공간이 얼마나 있는지 확인 하세요.
+
+col  "disk group" for a10
+
+select
+    dg.name as "disk group",
+    dg.state as "state",
+    total_mb/1024 as "total gb",
+    (total_mb - free_mb)/1024 as "used gb",
+    free_mb/1024 as "free gb",
+    round((1- (free_mb / total_mb)) * 100, 2) as "used percent"
+from v$asm_diskgroup dg
+order by "used percent" desc;
+
+SQL#1> save fra_space.sql
+
+문제2.  RMAN 으로 접속해서 기존에 백업받은 백업본을 지우시오 !
+
+[oracle@racdb1 ~]$ rman target sys/oracle nocatalog
+
+RMAN> delete backupset;
+
+문제3.  RMAN 으로 접속해서 아카이브 로그 파일을 전부 지우시오 !
+
+RMAN>  delete  copy;
+
+문제4. RMAN 으로 접속해서 새롭게 fullbackup 을 받으세요 !
+
+RMAN> configure  controlfile  autobackup  on;
+
+RMAN> backup  database; 
+
+문제5.  ts01 테이블 스페이스를 10m 로 해서 생성하시오 !
+
+SQL#1> create   tablespace  ts01   datafile  '+data'  size  10m;
+
+SQL#1> select tablespace_name, file_name from dba_data_files;
+
+SQL#1> save  tablespace.sql
+
+점심시간 문제.  RMAN 으로  ts01 테이블 스페이스를 백업 받으시오 !

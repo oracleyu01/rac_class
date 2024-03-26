@@ -1,0 +1,107 @@
+▣ 예제34.  RAC 환경에서 실수로 테이블 스페이스를 drop 했을 때 복구 방법
+
+ 실수로 테이블 스페이스를 drop 하게 되면 time base 불완전 복구를 해야합니다.
+ time base 불완전 복구를 할 때 먼저 테이블 스페이스가 drop 되기전의 
+ control file 백업본을 복원을 먼저하고 복구를 해야합니다. 
+
+순서:
+#1. ts22 테이블 스페이스를 생성합니다.
+#2. 컨트롤 파일을 생성하는 스크립트를 생성합니다. 
+#3. RMAN으로 전체 백업을 합니다. 
+#4. 로그 스위치를 5번 정도 수행합니다. 
+#5. ts22 테이블 스페이스를 drop 합니다. 
+#6. (복구) alert log file 을 열어서 drop 된 시간을 확인합니다.
+#7. (복구) 양쪽 인스턴스를 shutdown  immediate 로 내립니다.
+#8. (복구) 한쪽 인스턴스만 startup nomount 를 합니다. 
+#9. (복구) ts22 테이블 스페이스를 인식하고 있는 옛날 controlfile 을 복원합니다.
+#10.(복구) alter database mount 로 한쪽 인스턴스를 mount 로 올립니다.
+#11.(복구) ts22 테이블 스페이스가 drop 되기전 10초전으로 불완전 복구를 시도합니다.
+#12.(복구) resetlogs 옵션을 써서 db 를 올립니다.
+#13.(복구) ts22 테이블 스페이스가 복구되었는지 확인합니다.
+#14.(복구) 다른 인스턴스를 올리면 됩니다.
+
+구현:
+#1. ts22 테이블 스페이스를 생성합니다.
+
+SQL#1> create  tablespace  ts22   datafile  size  10m;
+
+#2. 컨트롤 파일을 생성하는 스크립트를 생성합니다. 
+
+SQL#1> alter  database  backup  controlfile   to  trace  as  '/home/oracle/c22.sql';
+
+#3. RMAN으로 전체 백업을 합니다. 
+$ rman  target  sys/oracle  nocatalog
+
+RMAN> show   all;
+
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+
+RMAN> CONFIGURE CONTROLFILE AUTOBACKUP ON;
+RMAN> backup   database  include  current  controlfile;
+
++FRA/racdb/autobackup/2024_03_25/s_1164556951.445.1164556953
+
+#4. 로그 스위치를 5번 정도 수행합니다. 
+
+SQL#1> alter system switch logfile;
+SQL#1> alter system switch logfile;
+SQL#1> alter system switch logfile;
+SQL#1> alter system switch logfile;
+SQL#1> alter system switch logfile;
+
+#5. ts22 테이블 스페이스를 drop 합니다. 
+
+SQL#1>  drop   tablespace  ts22  including  contents  and datafiles;
+
+#6. (복구) alert log file 을 열어서 drop 된 시간을 확인합니다.
+
+$ trace
+$ pwd
+/u01/app/oracle/diag/rdbms/racdb/racdb1/trace
+
+$ vi alert*  
+Mon Mar 25 16:05:47 2024
+
+2024/03/25:16:05:37
+
+#7. (복구) 양쪽 인스턴스를 shutdown  immediate 로 내립니다.
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+#8. (복구) 한쪽 인스턴스만 startup nomount 를 합니다. 
+
+SQL#1>  startup nomount
+
+#9. (복구) ts22 테이블 스페이스를 인식하고 있는 옛날 controlfile 을 복원합니다.
+
+$ rman target  sys/oracle nocatalog 
+
+RMAN> restore  controlfile  from '+FRA/racdb/autobackup/2024_03_25/s_1164556951.445.1164556953';
+
+#10.(복구) alter database mount 로 한쪽 인스턴스를 mount 로 올립니다.
+
+RMAN> alter database mount;
+
+#11.(복구) ts22 테이블 스페이스가 drop 되기전 10초전으로 불완전 복구를 시도합니다.
+
+RMAN> run { set  until  time='2024/03/25:16:05:37';
+                    restore  database;
+                    recover  database; 
+                  } 
+
+#12.(복구) resetlogs 옵션을 써서 db 를 올립니다.
+
+RMAN>  alter  database  open   resetlogs;
+
+#13.(복구) ts22 테이블 스페이스가 복구되었는지 확인합니다.
+
+SQL#1> select tablespace_name, file_name  from dba_data_files;
+
+#14.(복구) 다른 인스턴스를 올리면 됩니다.
+
+SQL#2> startup 
+
+#15. 꼭 full backup 을 하세요 ~
+
+RMAN> backup database;

@@ -1,0 +1,82 @@
+
+▣ 예제39.  global  동기화 작업에 대한 경합 튜닝의 큰 개요
+
+1. rac 개념  그림 
+
+    노드 사이의 인터커넥트에 스위치가 있는데 이 스위치의 역활을
+    하나의 노드가 죽었을때 다른 살아있는 노드로 세션들을 failover 시키는 
+    물리적 하드웨어 장치입니다.
+
+2. RAC 구성 요소 
+
+RAC  구성 요소 그림
+
+설명:  스토리지가  3가지중에 하나로 구성할 수 있는데 현재 19c RAC 를 사용하는
+         많은 회사들이 ASM 을 스토리지로 사용하는 회사들이 많아졌습니다. 
+
+3.  RAC 의 글로벌 동기화를 위한 서비스 3가지 
+
+ 그림설명
+
+1. GCS :  노드간의 데이터 전송하는 서비스 , LMS 프로세서가 담당
+2. GES :  노드간의 락을 관리하는 서비스, LMD 프로세서가 담당
+3. CGS :  노드간의 클러스터 그룹 서비스, LMON 프로세서가 담당
+
+이 서비스들로 인해서 우리가 RAC 노드중에 어느 노드로 접속하던지 간에
+항상 최신 데이터를 볼 수 있는것이고 내가 접속한 노드가 다운되면 나도 모르게
+살아있는 노드로 다시 접속하게 되게 됩니다.
+
+■ 실습
+
+#1. LMS 프로세서가 노드마다 몇개씩 떠있는지 확인합니다.
+
+$ ps  -ef | grep  lms
+
+#2. LMD 프로세서가 노드마다 몇개씩 떠있는지 확인합니다.
+
+$ ps -ef |grep  lmd
+
+#3. LMON 프로세서가 노드마다 몇개씩 떠있는지 확인합니다.
+
+$ ps -ef |grep lmon
+
+#4. lms 프로세서의 갯수를 정하는 파라미터를 확인하시오 !
+
+SQL#1> show parameter gcs
+
+인터커넥트로 활발하게 데이터와 메세지가 전달되는 상황의 서버이고 그래서 
+rac 서버가 느리다면 이 파라미터를 늘려줘야합니다. 
+
+#5.  gcs_server_processes 의 갯수를 3개로 늘려서 LMS 프로세서의 갯수를 3개로 만드시오
+
+SQL#1> alter  system  set  gcs_server_processes=3  scope=spfile  sid='*';
+
+SQL#1> shutdown  immediate
+SQL#2> shudown   immediate
+
+SQL#1> startup 
+SQL#2> startup
+
+[oracle@racdb1 ~]$ ps -ef |grep lms
+grid      4270     1  0 09:16 ?        00:01:20 asm_lms0_+ASM1
+oracle   13488     1  0 14:14 ?        00:00:00 ora_lms0_racdb1
+oracle   13492     1  0 14:14 ?        00:00:00 ora_lms1_racdb1
+oracle   13496     1  0 14:14 ?        00:00:00 ora_lms2_racdb1
+
+문제1. LMS 프로세서의 갯수를 다시 2개가 되게 하시오 !
+
+SQL#1> alter  system  set  gcs_server_processes=2  scope=spfile  sid='*';
+
+SQL#1> shutdown  immediate
+SQL#2> shudown   immediate
+
+SQL#1> startup 
+SQL#2> startup
+
+이 gcs_server_processes 의 갯수는 서버의 사양에 따라 자동으로 결정됩니다.
+일부러 lms 프로세서의 갯수를 늘려야한다면 이 파라미터를 수정하면 됩니다. 
+이게 RAC 튜닝입니다. 
+
+11g 버젼 기준으로는 36개 까지 LMS 프로세서의 갯수를 늘릴 수 있습니다. 
+
+글로벌 락을 관리하는 LMD 프로세서는 노드당 1개씩만 유지할 수 있습니다. 
