@@ -15,3 +15,33 @@ SQL#1> alter  system  checkpoint  global;
 $ rman  target  sys/oracle   nocatalog
 
 RMAN>  backup  database; 
+
+▣   RAC 환경에서 cold backup  수행하기 
+
+RAC 환경에서 cold backup 은 모든 노드의 인스턴스를 다 내리고 
+하나의 인스턴스만 mount 로 올려서 백업하는것 입니다.
+
+■ 실습
+
+#1.  양쪽 노드를 둘다 shutdown immediate 를 합니다.
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+#2.  1번 인스턴스를 startup mount 를 합니다. 
+
+SQL#1> startup mount
+
+#3.  1번 인스턴스에서 알맨으로 접속해서 전체 백업을 합니다. 
+
+$ rman  target  sys/oracle  nocatalog
+
+RMAN> backup  database; 
+
+#4.  1번 인스턴스를 open 시킵니다.
+
+RMAN> alter   database  open ; 
+
+#5.  2번 인스턴스를 startup 합니다. 
+
+SQL#2> startup
