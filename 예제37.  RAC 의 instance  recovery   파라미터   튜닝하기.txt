@@ -1,0 +1,57 @@
+
+▣ 예제37.  RAC 의 instance  recovery   파라미터   튜닝하기 
+
+  RAC 환경에서 instance  recovery 튜닝을 하기 위해서 반드시 알아야할 파라미터 2개 
+
+  1.  히든 파라미터 _fast_start_instance_recovery_target  :
+
+     GRD 가 재구성되는 시간을 결정하는 파라미터 
+
+     GRD(Global  Resource  Directory) :  내가 검색하고자하는 최신 데이터가 
+                                                    어느 노드에 있는지 위치정보가 있는 저장소
+
+  그림 : https://cafe.daum.net/oracleoracle/SoJX/157
+  
+  설명:  1번 인스턴스가 비정상적으로 종료되면 2번 인스턴스에서 1번 인스턴스가
+          가지고 있던 GRD 정보가 갱신됩니다.  그 시간을 결정하는 파라미터가 
+           _fast_start_instance_recovery_target  입니다. 
+                                                                      
+  2. fast_start_mttr_target   :  instance  recovery ( rollforward + rollback ) 에 걸리는 시간 
+
+  기본값은 자동입니다.  오라클이 알아서 이 시간을 결정합니다. 그런데 수동으로 
+   이 시간을 셋팅할 수 있습니다.   10분이라고 셋팅하면 오라클에 복구하는데
+    걸리는 시간을 10분으로 셋팅합니다.  그리고 10분을 맞춰주기 위해서 
+    평상시 dml 이 많으면 바로바로 메모리의 내용을 disk 로 반영합니다. 
+
+■ 실습
+
+#1.  인스턴스 리커버리에 걸리는 시간을 10분으로 지정합니다. 
+
+SQL#1> show  parameter  fast_start_mttr_target 
+
+SQL#1> alter  system  set  fast_start_mttr_target=600  scope=both  sid='*';
+
+SQL#1> show  parameter  fast_start_mttr_target 
+
+#2.  GRD 를 재구성하는 시간은 오라클에서 변경하라고 권장하지 않으므로 확인만 합니다.
+
+col "Parameter" format a40
+col "Session Value" format a15
+col "Instance Value" Format a15
+
+select  a.ksppinm  "Parameter",
+            b.ksppstvl "Session Value",
+            c.ksppstvl "Instance Value"
+     from x$ksppi a, x$ksppcv b, x$ksppsv c
+    where a.indx = b.indx and a.indx = c.indx
+      and a.ksppinm like '%&param_name%';
+
+결과가 출력되지는 않습니다. 
+
+문제1.   RAC 환경에서  instance recovery 에 걸리는 시간을 15분으로 지정하시오 !
+
+SQL#1> alter  system  set  fast_start_mttr_target=900  scope=both  sid='*';
+
+※  잦은 instance recovery  의 긴 복구 시간으로 문제가 될 때 위와 같이 설정하면
+    복구 시간을 미리 예상할 수 있어서 유용합니다. 
+
