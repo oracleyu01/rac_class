@@ -1,0 +1,113 @@
+
+▣ 예제50.  RAC 환경에서 많이 발생하는 HW enqueue 의 원인과 해결방법 
+
+ - HW  enqueue 란 ?   High  Water  Mark   enqueue 의 약자입니다. 
+
+   HWM 를 올릴려면  이  enqueue 를 확보해야  HWM 을 올릴 수 있습니다.
+
+ - High  Water  Mark 가 무엇입니까 ?   <--- 자주 물어보는 면접질문
+
+   답변:   포멧된 디스크와 포멧되지 않은 디스크의 경계선 입니다.
+
+   데이터를 insert 를 하려면 포멧된 디스크가 있어야합니다. 
+
+ 그림: https://cafe.daum.net/oracleoracle/SoJX/228
+
+ 설명:  동시에 같은 테이블에 insert 를 하는 세션이 다수가 있으면
+          그중에 하나의 insert 문의 세션만 HW enqueue 를 확보해서
+          HWM 를 위로 올릴 수 있고 나머지 세션들은 모두 HW enqueue 로 waiting 
+          하게 됩니다. 
+   
+  이런 HW enqueue 가 RAC 환경에서는 더 자주 발생합니다.
+  왜냐하면 양쪽 노드에서 여러 세션들이 동시에 같은 테이블에 데이터를
+  입력하는 경우가 있기 때문에 하나의 인스턴스에서 보다 여러 노드 일때가
+  더 HW enqueue 가 발생할 확률이 높습니다. 
+ 
+처방전:    1.   insert 가 이루어지는 테이블이 속한 테이블 스페이스의 
+                  segment  관리방법을 automatic  segment  space  management 방식으로
+                  설정해야 합니다.  ( 기본값이 이 방식으로 셋팅되어져 있습니다.)
+
+             2.  _bump_high_water_mark_count 파라미터의 숫자값을 늘립니다. 
+                            ↓               
+                  HWM 를 올릴때 한번에 포멧할 수 있는 블럭의 갯수 
+
+■ 실습
+
+#1.  t_log_buffer_space  테이블이 속한 테이블 스페이스의 segment 속성이
+      auto 인지 manual 인지 확인합니다. 
+
+설명:  segment space management 가 auto 이면 오라클이 알아서 HW enqueue 가
+       발생안하겠금   _bump_high_water_mark_count  를 자동 조절 합니다. 
+
+SQL#1>  connect owi/owi
+
+SQL#1> select   table_name, tablespace_name
+             from  user_tables
+             where  table_name='T_LOG_BUFFER_SPACE';
+
+T_LOG_BUFFER_SPACE             OWI_TBS
+
+SQL#1> select  tablespace_name,  segment_space_management
+               from  dba_tablespaces
+               where  tablespace_name='OWI_TBS';
+
+   OWI_TBS                        AUTO
+
+#2.  테이블 스페이스를 하나 만드는데 segment space 관리를 manual 로 해서
+      생성하시오 !
+
+SQL#1> create  tablespace  ts77
+              datafile  '+data'   size  10m
+              segment  space   management  manual; 
+
+#3. T_LOG_BUFFER_SPACE 테이블을 ts77 테이블 스페이스로 이동 시킵니다. 
+
+SQL#1> alter   table   t_log_buffer_space   
+             move   tablespace   ts77;
+
+SQL#1>  select  table_name,  tablespace_name
+               from  user_tables
+               where  lower(table_name) = 't_log_buffer_space'; 
+
+#4.  (터미털창2번)  HW enqueue 가 발생하는지 모니터링을 준비합니다. 
+
+SQL#1> @event
+
+#5. (터미널창1번) HW enqueue 관련 부하를 일으킵니다.
+
+SQL#1> connect owi/owi
+
+SQL#1> @exec 
+
+Event name to simulate: log_buffer_space
+
+나머지는 그냥 엔터를 칩니다. 
+
+결과 그림:  https://cafe.daum.net/oracleoracle/SoJX/229
+
+#6. 사진을 한번 찍습니다.
+
+
+#7. (해결방법)  다시 segment space management 가 auto 로 되어져있는 owi_tbs 
+     테이블 스페이스로 t_log_buffer_space 테이블을 move 합니다. 
+
+SQL#1> alter   table   t_log_buffer_space   
+             move   tablespace   owi_tbs;
+
+오늘의 마지막 문제. (rac 이수자 평가 4번 문제)   오늘 배운 enqueue 중에
+ SQ  enqueue 또는 HW enqueue 를 가지고 테스트해서 
+ 튜닝전과 튜닝후의 비교 레포트를 생성해서 제출하시오 !
+
+ 제출형식 : 혜민이가 올린 비교 레포트와 같이 제출하면 됩니다. 
+
+1. SQ enqueue 의 예:  
+
+튜닝전 : alter   sequence  seq_sq_enqueue  cache  2;
+
+튜닝후:  alter   sequence  seq_sq_enqueue  cache  50;
+
+2. HW enqueue 의 예:
+
+튜닝전:  alter  table  t_log_buffer_space  move  tablespace  ts77;
+
+튜닝후:  alter  table  t_log_buffer_space  move  tablespace  owi_tbs; 

@@ -1,0 +1,96 @@
+
+▣ 예제47.  RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법1 
+               ( nocache 일때 )
+
+- 오라클에서 권장하는 시퀀스 파라미터에 조합의 우선순위 !
+  (가장 안좋은것부터 좋은 순서데로 나열)
+
+ 파라미터의 조합                대기 이벤트(오라클의 성능이 떨어지는 이유)
+
+ 1.  nocache     :                    library  cache  lock      
+ 2.  cache  +  order   :            SV enqueue
+ 3.  cache 사이즈 작게  +  noorder    :  SQ  enqueue   많이 발생 
+ 4.  cache 사이즈 크게  +  noorder    :  SQ  enqueue   적게 발생 
+
+■ 실습1.  환경 구성
+
+SQL#1> drop  user  owi  cascade;
+
+SQL#1> drop  tablespace  owi_tbs  including  contents  and  datafiles; 
+
+SQL#1> alter  system  set  db_recovery_file_dest_size=30G;
+
+RMAN>  delete  backup;
+
+RMAN> delete  copy;
+
+RMAN> backup  database  ;
+
+SQL#1>  @install
+
+Input data file name(for default tablespace  ex. c:\owi\owi01.dbf):  +data
+Verbose mode on?[ON/OFF]: on
+
+■ 실습1.  시퀀스 속성 nocache 성능 테스트 
+
+#1. owi 유져가 가지고 있는 시퀀스를 확인하고 속성을 조회하시오 !
+
+SQL#1> connect  owi/owi
+
+SQL#1> select  sequence_name,  cache_size,  order_flag
+               from  user_sequences; 
+
+SQL#1> alter  sequence  seq_sq_enqueue  nocache;
+
+SQL#1> select  sequence_name,  cache_size,  order_flag
+               from  user_sequences; 
+
+#2. 터미널 창을 열어서 lock 관련한 대기 이벤트로 대기하는 세션을 조회합니다.
+
+   select  sid, event
+      from gv$session_wait
+     where  event like '%lock%'
+      or  event  like '%enqueue%'
+
+#3. 시퀀스 관련 성능 부하를 일으킵니다.
+
+SQL#1> @exec
+
+Event name to simulate: sq_enqueue
+
+나머지는 전부 그냥 엔터 치세요 ~
+
+그리고 다른 터미널 창에서 다음과 같이 대기 이벤트를 확인합니다.
+
+   select  sid, event
+      from gv$session_wait
+     where  event like '%lock%'
+      or  event  like '%enqueue%'
+
+       18 row cache lock
+       135 row cache lock
+       136 row cache lock
+       140 row cache lock
+       255 row cache lock
+       257 row cache lock
+       367 row cache lock
+       371 row cache lock
+       373 row cache lock  <--- db 에 있는 시퀀스의 번호를 획득하지 못하여 waiting 함
+
+         해결방법 ?  cache 사이즈를 설정합니다. 
+
+점심시간 문제. 다음과 같이 row cache lock 대기 이벤트로 대기 하는 세션이 조회되는지
+                    확인하시오 ! 
+
+ create  sequence   seq_sq_enqueue
+   start  with  1
+   maxvalue  10000
+   increment  by   1
+   nocache
+   order;
+
+위와 같이 생성하면 은행에 갔는데  많은 사람들이 번호표 기계앞에서 다투고 있는
+상황이 됩니다. 
+
+미래의 나를 구하기 위해서는 nocache 로 하면 안되고  cache 로 해줘야합니다. 
+

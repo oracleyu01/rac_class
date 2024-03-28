@@ -1,0 +1,97 @@
+▣ 예제44.  gc buffer  busy  대기 이벤트 일으키고 해결하기 
+
+ gc buffer  busy  ?  buffer  busy  wait 이라는 대기 이벤트가  rac 환경에서
+                          global 하게 발생하는 경우에 나타나는 대기 이벤트입니다.
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/197
+
+설명: 1번 노드에서 2번 노드로 전송이 되고 있는 데이터를 update 하는 경우에
+       gc buffer busy 대기 이벤트가 발생합니다.  이 경우는 1번 노드와 2번 노드의
+       각각 접속 세션들이 같은 블럭의 데이터를 update 하려고 시도하는 경우입니다.
+
+■ 실습1.  OWI 패키지 초기화 하는 방법
+
+#1. SYS 유져로 접속해서 owi 유져를 drop 하세요 
+
+SQL#1> connect / as sysdba
+
+SYS>  drop  user   owi   cascasde;  
+
+#2. owi_tbs 테이블 스페이스를 drop 합니다. 
+
+SYS> drop  tablespace   owi_tbs  including  contents   and   datafiles;
+
+■ 실습2.  gc buffer  busy 대기 이벤트를 일으키는 실습 
+
+#1.  2번 노드를 올립니다. 
+
+#2. owi 패키지를 sys 유져에서 설치합니다. 
+
+SQL#1> @install
+
+Input data file name(for default tablespace  ex. c:\owi\owi01.dbf): +data
+
+#3. gc buffer busy wait  대기 이벤트를 일으킵니다. 
+
+SQL#1> @exec 
+
+Event name to simulate: buffer_busy_waits
+
+Session count [10]: 20
+Expired by time(1) or looping count(2) [1]: 1
+Execution internval(sec or count) [30]: 120
+Enable_trace (1=TRUE, 0=FALSE) [0]: 1
+Exec method(0=Oracle Job, 1=Unix Shell) [0]: 0
+Init data(1=TRUE, 0=FALSE) [1]: 1
+
+그리고 아래의 쿼리를 실행해보면 ?
+
+   select  sid, event
+      from gv$session_wait
+     where  event like '%gc buffer busy%'
+    or  event  like '%buffer busy wait%'
+
+      264 gc buffer busy release
+       370 gc buffer busy release
+       371 gc buffer busy release
+       374 gc buffer busy release
+       375 gc buffer busy release
+       377 gc buffer busy release
+        14 gc buffer busy acquire
+
+#4.  사진을 수동으로 찍습니다. 
+
+SQL#1> @snap
+
+#5.  awr  레포트를 생성합니다. 
+
+SQL#1> @?/rdbms/admin/awrrpt.sql 
+
+#6. addm 레포트를 생성합니다.
+
+SQL#1> @?/rdbms/admin/addmrpt.sql 
+
+오늘의 마지막 문제.  위의 상황에서 ADDM 레포트를 뜨고 그 안에 해결방법들중에
+                            buffer busy wait 에 관련한 해결방법을 캡쳐해서 올리시오 !
+
+
+ 답글 올리시고 나머지 시간은 자유롭게 자습 또는 ocp 시험 공부 또는 cj dba 지원 준비
+하시면 됩니다. 
+
+
+1. owi 시나리오를 무리하게 돌렸더니 db 가 깨지고 복구를 해야하는 상황
+
+접속을 했는데 oracle not available 로 메세지가 출력
+
+2. alert log file 을 모니터링 해보면 계속 로그스위치가 발생하면서 아카이브가 full 나는 상황
+
+[oracle@racdb1 ~]$ trace
+[oracle@racdb1 trace]$
+[oracle@racdb1 trace]$ tail -f al*
+
+화면이 막 움직이면서 로그 스위치가 발생하면서 db_recovery_file_dest_size 라는
+파라미터에 관한 메세지가 막 출력이 되면
+
+3. 그냥 rac vm 이 안켜지는 상황 
+
+4. 정상적인 상황 

@@ -1,0 +1,27 @@
+
+▣ 예제42. 오라클에 부하를 주고 원인 파악하는 시물레이션 환경 구현 
+
+ 현업에서 많이 발생하는 대기 이벤트들을 볼 수 있는 시나리오 입니다.
+
+1. owi.zip 을 /home/oracle 밑에 올립니다.
+
+다운로드 주소:  https://cafe.daum.net/oracleoracle/SoJX/186
+
+2. owi.zip 의 압축을 해제합니다.
+
+ $ unzip  owi.zip
+ $ ls -l  *.sql
+
+3. owi 시나리오 패키지를 설치 합니다. 
+
+sys> @install
+
+Input data file name(for default tablespace  ex. c:\owi\owi01.dbf): +data
+
+Verbose mode on?[ON/OFF]:  on
+
+SQL#1> connect owi/owi
+Connected.
+
+owi 유져로 접속이 잘되면 성공적으로 설치를 한것 입니다.
+

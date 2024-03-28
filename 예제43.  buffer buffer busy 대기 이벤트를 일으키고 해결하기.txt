@@ -1,0 +1,191 @@
+
+▣ 예제43.  buffer buffer busy 대기 이벤트를 일으키고 해결하기 
+
+ buffer  busy  wait  대기이벤트 ?
+
+  여러 세션들에 의해서 동시에  하나의 버퍼의 데이터를 동시에 갱신하려할때
+  buffer lock 을 못잡아서 발생하는 대기 이벤트 
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/191
+
+■ 실습
+
+0.  2번 인스턴스를 shutdown immediate 로 내립니다. 
+
+1. owi 로 접속해서 수동으로 사진을 찍는다.
+
+$ sqlplus owi/owi
+
+SQL> exec dbms_workload_repository.create_snapshot;
+
+설명:  인스턴스의 성능정보를 AWR repository 에 수집합니다. 
+
+
+2. owi 유져에서  buffer busy wait 대기 이벤트를  일으킵니다
+
+ SQL#1> @exec 
+
+Event name to simulate: buffer_busy_waits
+Session count [10]: 10
+Expired by time(1) or looping count(2) [1]: 1
+Execution internval(sec or count) [30]: 60
+Enable_trace (1=TRUE, 0=FALSE) [0]: 1
+Exec method(0=Oracle Job, 1=Unix Shell) [0]: 0
+Init data(1=TRUE, 0=FALSE) [1]: 1
+
+- sqldeveloper 에서 다음과 같이 모니터링 합니다.
+
+select  sid, event
+ from gv$session_wait
+where  event like '%gc buffer busy%' 
+or  event  like '%buffer busy wait%';
+
+3. 사진을 다시 찍습니다. 
+
+SQL> exec dbms_workload_repository.create_snapshot;
+
+4. awr report 를 생성합니다.
+
+SQL>  @?/rdbms/admin/awrrpt.sql
+
+설명:  성능 보고서를 출력합니다. 
+
+AWR 레포트는 특정 기간에 DB 에 발생한 성능 이슈를 확인하는 레포트 입니다.
+그래서 전체적으로 어떤 대기 이벤트가 많이 일어났으며 악성 SQL은 
+어떤건지를 빠르게 파악할 수 있습니다. 
+해결방법은 나오지 않아서 DBA 가 직접 해결방법을 알 고 있어야합니다.
+그런데 아래의 addm 레포트는 해결방법을 알려줍니다. 
+
+AWR 레포트로 database 의 어떤 성능의 이슈가 있는지 분석을 했으면
+이제 ADDM 레포트로 해결방법을 알아내야합니다. 
+
+5. addm  report 를 생성합니다. (처방전이 출력됩니다.)
+
+SQL> @?/rdbms/admin/addmrpt.sql 
+
+
+ Recommendation 1: Schema Changes
+   Estimated benefit is 1.06 active sessions, 15.88% of total activity.
+   --------------------------------------------------------------------
+   Action
+
+      Consider rebuilding the TABLE "OWI.T_BUFFER_BUSY_WAITS" with obje               ct ID
+      87509 using a higher value for PCTFREE.
+
+해결방법에 대한 설명 ?   
+
+https://cafe.daum.net/oracleoracle/SoJX/193
+
+설명:  pctfree 는 update 를 위한 공간입니다.  그래서 이 공간에는 insert 할 때 
+         데이터가 입력되지 않습니다. 블럭안에 데이터가 더 크게 변경이 될때
+        이 pct free 영역에 update 를 합니다. 
+
+그런데 ADDM 레포트의 해결방법을 보면 PCT FREE 를 늘려야 buffer busy wait 
+을 덜 발생하게 할 수 있다라고 나와 있습니다. 
+
+1. pctfree 를 안늘렸을때 
+
+그림:  https://cafe.daum.net/oracleoracle/SoJX/194
+
+2. pctfree 를 늘렸을때 
+
+그림 : https://cafe.daum.net/oracleoracle/SoJX/195
+
+pctfree 가 커서 블럭마다 데이터가  1건씩 입력된 상태입니다.  그렇게 되면
+블럭마다 하나씩 있는 버퍼락을 4개의 세션이 모두 잡을 수 있게 되었으므로
+buffer busy wait 으로 대기하는 세션이 사라지게 됩니다. 
+단점이 있다면 공간을 많이 차지한다는 것입니다. 
+
+■ 실습 
+
+#1.  문제가 되고 있는 테이블을 백업합니다.
+#2.  문제가 되고 있는 테이블의 데이터를 truncate 합니다.
+#3.  문제가 되고 있는 테이블의 pctfree 를 늘립니다. 
+#4.  백업받은 데이터를 문제가 되고 있는 테이블에 입력합니다. 
+#5.  사진을 찍습니다. 
+#6.  buffer busy wait 대기 이벤트를 일으킵니다.
+#7.  사진을 찍습니다.
+#8.  AWR 비교 레포트를 생성해서 성능이 얼마나 향상되었는지 확인합니다. 
+    
+   "DB 성능 분석 시 이전버전과 후버전에서 어떻게 달라졌는지 파악하는 역량"
+
+구현:
+
+#1.  문제가 되고 있는 테이블을 백업합니다.
+
+ create  table  t_buffer_busy_waits_backup
+ as
+   select  * from  t_buffer_busy_waits; 
+ 
+#2.  문제가 되고 있는 테이블의 데이터를 truncate 합니다.
+
+truncate   table  t_buffer_busy_waits;
+
+#3.  문제가 되고 있는 테이블의 pctfree 를 늘립니다. 
+
+select  table_name, pct_free
+  from  user_tables
+  where  lower(table_name)='t_buffer_busy_waits';
+
+T_BUFFER_BUSY_WAITS                    10  <--- 10% 의 여유공간이 있습니다.
+
+alter  table  t_buffer_busy_waits  pctfree  99; 
+
+select  table_name, pct_free
+  from  user_tables
+  where  lower(table_name)='t_buffer_busy_waits';
+
+#4.  백업받은 데이터를 문제가 되고 있는 테이블에 입력합니다. 
+
+insert   into  t_buffer_busy_waits
+ select  *
+   from  t_buffer_busy_waits_backup; 
+
+commit;
+
+#5.  사진을 찍습니다. 
+
+exec  dbms_workload_repository.create_snapshot; 
+
+#6.  buffer busy wait 대기 이벤트를 일으킵니다.
+
+SQL#1> @exec
+
+#7.  사진을 찍습니다.
+
+Event name to simulate: buffer_busy_waits
+Session count [10]: 10
+Expired by time(1) or looping count(2) [1]: 1
+Execution internval(sec or count) [30]: 60
+Enable_trace (1=TRUE, 0=FALSE) [0]: 1
+Exec method(0=Oracle Job, 1=Unix Shell) [0]: 0
+Init data(1=TRUE, 0=FALSE) [1]: 1
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.05
+
+PL/SQL procedure successfully completed.
+
+#8.  AWR 비교 레포트를 생성해서 성능이 얼마나 향상되었는지 확인합니다. 
+    
+   "DB 성능 분석 시 이전버전과 후버전에서 어떻게 달라졌는지 파악하는 역량"
+
+SQL#1> @?/rdbms/admin/awrddrpt.sql
+
+Enter value for report_type: html
+
+Enter value for num_days:
+
+Enter value for begin_snap: 85
+Enter value for end_snap: 86
+
+Enter value for num_days2:
+
+Enter value for begin_snap2: 86
+Enter value for end_snap2: 87
+
+Enter value for report_name: report03.html
+
+결과 레포트 :   https://cafe.daum.net/oracleoracle/SoJX/196
+

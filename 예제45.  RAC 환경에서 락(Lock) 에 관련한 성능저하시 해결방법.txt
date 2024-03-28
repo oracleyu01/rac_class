@@ -1,0 +1,41 @@
+
+▣ 예제45.  RAC 환경에서 락(Lock) 에 관련한 성능저하시 해결방법
+
+  오라클 db 의 성능이 느리다면 원인은 크게 2가지 ?
+
+  1. 악성 SQL  ----------> SQL 튜닝으로 해결할 수 있습니다. 
+
+  2.  Lock  --------------->  파라미터 튜닝을 해야합니다. 
+
+ ※  Lock 의 종류 2가지 ?
+
+   1. enqueue 락
+   2. 기타 락 
+
+ ■ enqueue 의 뜻 ?  큐에 들어가서 순서데로 waiting 하는 구조를 갖는 락(lock)
+
+     en           queue(큐)
+     ↓               ↓
+  enterance      큐라는 메모리 영역
+  입장하다
+
+
+그림:  https://cafe.daum.net/oracleoracle/SoJX/219
+
+설명: 그동안 update 문에서만 락을 사용한다라고 알고 있었는데 update 뿐만 아니라
+       모든 DML, DDL, DCL 문이 다 락을 획득합니다.  그런데 그 락의 종류가 다 다릅니다.
+       여기서 말하는 락은 enqueue 를 말합니다. 
+
+* enqueue 의 종류 ?
+
+    1. SQ  enqueue  :  시퀀스의 번호를 획득할때 사용하는 락 
+    2. TX  enqueue  :  테이블의 행의 데이터를 갱신할때 사용하는 락
+    3. TM enqueue  :  테이블 전체에 거는 락 
+    4. HW  enqueue :  HWM 를 올릴때 거는 락
+    5. US   enqueue  :  Undo  Segment 를 사용할 때 거는 락 
+
+2. 기타 락(lock) ?    Library  cache   lock
+                          Library  cache  pin
+                          row  cache  lock
+                          buffer  busy waits
+

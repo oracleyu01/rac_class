@@ -1,0 +1,117 @@
+
+▣ 예제49.  RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법3
+               ( cache 사이즈가 작고 + noorder 일때 )
+
+ cache    2    +   noorder   속성일 때
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/225
+
+설명:  SQ  enqueue 는 메모리에 캐쉬된 시퀀스 번호가 다 소진되어서 없어서
+        database 에서 새롭게 시퀀스의 번호를 생성해서 메모리에 올릴려고 할 때
+        확보해야하는 lock 입니다.  SQ enqueue 를 확보한 세션만 시퀀스 번호를
+       생성해서 메모리에 올릴 수 있고 나머지는 전부 SQL enqueue 를 획득 못해서
+       waiting 하게 됩니다. 
+
+■ 실습
+
+#1. (터미널창1) seq_sq_enqueue 시퀀스의 속성을 확인합니다.
+
+SQL#1> connect owi/owi
+
+SQL#1>  select  sequence_name, cache_size, order_flag
+              from user_sequences;
+
+SEQ_SQ_ENQUEUE                         10      N
+
+#2. (터미널창1) seq_sq_enqueue 의 속성중 cache 사이즈를 2로 지정합니다. 
+
+SQL#1> alter  sequence  seq_sq_enqueue   cache  2; 
+
+SQL#1>  select  sequence_name, cache_size, order_flag
+              from user_sequences;
+
+#3. (터미널창2) 대기 이벤트를 모니터링하는 스크립트를 수행합니다. 
+
+SQL#1> @event
+
+#4. (터미널창1) 시퀀스 관련한 부하를 줍니다.  
+
+SQL#1> @exec
+Event name to simulate: sq_enqueue
+
+나머지는 그대로 엔터만 칩니다. 
+
+#5. (터미널창2) 부하후 나타나는 대기 이벤트가 뭔지 조회합니다. 
+
+       13 enq: SQ - contention
+        17 enq: SQ - contention
+       255 enq: SQ - contention
+       373 enq: SQ - contention
+       371 enq: SQ - contention
+       136 enq: SQ - contention
+       139 enq: SQ - contention
+       257 enq: SQ - contention
+       369 enq: SQ - contention
+
+설명:  시퀀스의 캐쉬 사이즈가 너무 작아서 SQ  enqueue 로 경합을 벌이고 있습니다.
+
+문제1.  사진을 한번 찍고  addm 레포트를 생성해서 해결 방법을 알아내시오 !
+
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+SQL#1> @?/rdbms/admin/addmrpt.sql 
+
+
+  Recommendation 1: Application Analysis
+   Estimated benefit is .52 active sessions, 52.64% of total activity.
+   -------------------------------------------------------------------
+   Action
+      Investigate application or look at top SQL to find hot sequences. Use a
+      larger cache size for those sequences. Try avoiding the use of the ORDER
+      setting if running RAC.
+
+문제2.  ADDM 레포트의 처방데로 cache  사이즈를 늘리는데 일단 50으로 늘리시오 !
+
+SQL#1>  connect  owi/owi
+
+SQL#1>  alter  sequence  SEQ_SQ_ENQUEUE  cache  50;
+
+SQL#1>  select  sequence_name, cache_size, order_flag
+              from user_sequences;
+
+SEQ_SQ_ENQUEUE                         50      N
+
+그림 : https://cafe.daum.net/oracleoracle/SoJX/226
+
+설명:  시퀀스의 캐쉬 사이즈가 50개로 늘어났으므로  동시에 시퀀스를 사용하려는 
+         세션이 50개만 되지 않는다면 SQ enqueue 로 waiting 하는 세션이 덜 발생할겁니다.
+
+문제3.  다시 부하를 아까와 똑같이 일으키고  SQ  enqueue 가 뜨는지 모니터링하시오 !
+
+SQL#1> @exec
+
+Event name to simulate: sq_enqueue
+
+나머지는 그냥 엔터
+
+설명:  SQ enqueue 가 떴지만 아까보다는 금방 사라졌습니다. 
+
+면접질문:  튜닝후에 성능이 더 좋아졌다것을 어떻게 알 수 있었나요 ?
+
+답변 :   awr 비교 레포트를 생성해서 튜닝전과 튜닝후를 비교해보았더니
+          SQ  enqueue 에 대한 경합이 줄어든것을 확인했습니다. 
+
+비교 레포트 생성하는 스크립트는 ?
+
+SQL#1> @?/rdbms/admin/awrddrpt.sql
+
+테스트 순서:    1.  사진 찍고
+                    2.  부하일으키고
+                    3.  사진 찍고
+                    4. 튜닝
+                    5. 사진찍고
+                    6. 부하일으키고
+                    7. 사진찍고 
+
+결과 : https://cafe.daum.net/oracleoracle/SoJX/227
+

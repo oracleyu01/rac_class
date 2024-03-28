@@ -1,0 +1,150 @@
+▣ 예제46.  RAC 환경에서 시퀀스 파라미터 ORDER 와 NOORDER 
+
+   시퀀스에서 번호를 생성할 때 거는 락(lock)
+
+  예:  은행에 가면 번호표 기계가 있는데 그걸 시퀀스라고 생각하면 됩니다.
+       내가 번호를 뽑고 있는데 누군가 와서 나를 밀치고 내가 뽑으려는 번호를
+       뺏어가면 안되니까 락을 거는겁니다. 이게 SQ  enqueue 입니다. 
+
+ 튜너들이나 db 엔지니어들이 사이트 들어가면?
+ 
+ * db 엔지니어 성장기록 
+
+ 설치와 트러블 슈팅----->  데이터 이행 ---> 튜닝 
+  
+1. 시퀀스 관련한 SQL 튜닝 
+
+튜닝전:       select  max(empno)  into  v_empno
+                     from  emp;
+ 
+                 insert  into  emp(empno, ename, sal )
+                  values( v_empno, v_ename, v_sal );
+
+튜닝후:       insert   into   emp(empno, ename, sal )
+                  values( seq1.nextval,  v_ename, v_sal );
+
+2. 시퀀스 관련한 파라미터 튜닝 
+
+ 시퀀스를 만드는 문법 :     
+
+  create  sequence   seq1
+   start   with  1
+   maxvalue   100
+   increment  by  1
+   cache  20;
+
+   select  seq1.nextval   from  dual; 
+
+문제1.   시퀀스를 다음과 같이 생성하시오 !
+
+ 시퀀스 이름:  seq2
+ 증가치  :  1
+ 최대값 : 1000
+ 캐쉬 :  nocache   ----> 메모리에 미리 시퀀스 번호를 올려놓지 않겠다. 
+
+답:  create  sequence  seq2
+      start  with  1
+      increment  by  1
+      maxvalue 1000
+      nocache;
+
+문제2.  다음과 같이 시퀀스를 생성하시오 !
+
+ 시퀀스 이름: seq3
+ 증가치  :   1
+ 최대값 : 10000
+ 캐쉬 :  100
+
+답:  create  sequence  seq3
+      start  with   1
+      increment  by  1
+      maxvalue  10000
+      cache  100;
+
+■  RAC 에 반드시 알아야할 시퀀스 관련 파라미터  order 
+
+ 문법 :   create   sequence   seq7
+             start   with   1
+             maxvalue  100
+             increment  by  1
+             cache  20
+             order ;  
+
+order :  rac 환경에서 노드와 무관하게 시퀀스의 발번 순서를 보장 시키는것 
+noorder :  rac 환경에서 시퀀스의 발번 순서를 보장하지 않는것 
+
+1. order 인 경우 
+
+ create   sequence   seq7
+             start   with   1
+             maxvalue  100
+             increment  by  1
+             cache  20
+             order ;  
+
+그림 : https://cafe.daum.net/oracleoracle/SoJX/220
+
+2. noorder 일 때 
+
+ create   sequence   seq8
+             start   with   1
+             maxvalue  100
+             increment  by  1
+             cache  20
+             noorder ;  
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/222
+
+■ 실습 
+
+#1. SEQ1 시퀀스가 있으면 DROP 합니다. 
+
+SQL#1> connect scott/tiger
+SQL#1> drop   sequence  seq1;
+
+#2. order 옵션을 사용해서 SEQ1 시퀀스를 생성합니다.
+
+SQL#1> create  sequence  seq1
+            start  with  1
+            maxvalue  100
+            increment  by  1
+            cache  20
+            order ;
+
+#3. 1번 노드에서 SEQ1 시퀀스의 번호를 2번 생성합니다.
+
+SQL#1> select  seq1.nextval  from  dual;
+SQL#1> select  seq1.nextval  from  dual;
+
+#4. 2번 노드에서 SEQ1 시퀀스의 번호를 2번 생성합니다. 
+
+SQL#2> select  seq1.nextval  from  dual;
+SQL#2> select  seq1.nextval  from  dual;
+
+문제1. 이번에는 norder 옵션을 실험하는데 SEQ1 을 DROP 하고 다시 생성해서 
+         다음과 같이 테스트 하시오 !
+
+#1. SEQ1 시퀀스가 있으면 DROP 합니다. 
+
+SQL#1> connect scott/tiger
+SQL#1> drop   sequence  seq1;
+
+#2. order 옵션을 사용해서 SEQ1 시퀀스를 생성합니다.
+
+SQL#1> create  sequence  seq1
+            start  with  1
+            maxvalue  100
+            increment  by  1
+            cache  20
+            noorder ;
+
+#3. 1번 노드에서 SEQ1 시퀀스의 번호를 2번 생성합니다.
+
+SQL#1> select  seq1.nextval  from  dual;
+SQL#1> select  seq1.nextval  from  dual;
+
+#4. 2번 노드에서 SEQ1 시퀀스의 번호를 2번 생성합니다. 
+
+SQL#2> select  seq1.nextval  from  dual;
+SQL#2> select  seq1.nextval  from  dual;
+

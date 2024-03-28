@@ -1,0 +1,123 @@
+
+▣ 예제48.  RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법2
+               ( cache + order 일때 )
+
+- Sequence 생성시 안좋은 상황들을 정리 순위 !
+
+1. nocache
+2. cache + order                    <---   이 상황의 시나리오를 구현
+3. cache 사이즈 작게 + noorder 
+4. cache 사이즈 크게 + noorder   <-- 가장 이상적인 파라미터의 조합 
+
+★ cache + order  시나리오 설명 
+
+  create  sequence  seq_sq_enqueue
+  start  with  1
+  increment  by  1
+  cache  10
+  order  ; 
+  
+그림:  https://cafe.daum.net/oracleoracle/SoJX/223
+
+설명: 1번 노드와 2번 노드가 서로 통신하면서 몇번까지 번호를 부여했는지 서로 
+        메세지를 교환합니다. 시퀀스 사용이 모든 노드에서 빈번해지면  rac 성능저하가
+        발생하는것입니다.  이때 발생하는 대기 이벤트가 dfs lock handle  입니다. 
+
+■ 실습
+ 
+#1.  owi 유져의 seq_sq_enqueue 시퀀스의 시퀀스 속성을 확인하시오 !
+
+SQL#1>  connect  owi/owi
+
+SQL#1>  select  sequence_name,  cache_size, order_flag
+               from   user_sequences;
+ 
+SEQ_SQ_ENQUEUE                          0        N
+
+#2.  cache 사이즈는 10으로 하고 order flag 는  order 로 설정합니다.
+
+SQL#1> alter   sequence  seq_sq_enqueue   cache  10;
+
+SQL#1> alter   sequence  seq_sq_enqueue  order ;
+
+SQL#1>  select  sequence_name,  cache_size, order_flag
+               from   user_sequences;
+ 
+#3.(터미널2창)  부하를 일으키기 전에 별도의 터미널 창을 열어서 대기 이벤트를 볼 준비를 하시오!
+
+select  sid, event
+   from gv$session_wait
+   where  event  not  in ( 'ASM background timer',
+'DIAG idle wait',
+'GCR sleep',
+'PING',
+'PX Deq: Execute Reply',
+'PX Deq: Execution Msg',
+'SQL*Net message from client',
+'Space Manager: slave idle wait',
+'Streams AQ: qmn coordinator idle wait',
+'Streams AQ: qmn slave idle wait',
+'Streams AQ: waiting for time management or cleanup tasks',
+'VKTM Logical Idle Wait',
+'class slave wait',
+'gcs remote message',
+'ges remote message',
+'pmon timer',
+'rdbms ipc message',
+'smon timer',
+'wait for unread message on broadcast channel')
+      order  by event  asc; 
+     
+#4. (터미널1창) owi 유져에서  cache + order  시퀀스에 대한 부하를 일으키시오 !
+
+SQL#1> connect  owi/owi
+
+SQL#1> @exec
+
+Event name to simulate: sq_enqueue
+
+나머지는 그냥 다 엔터를 치세요 ~~
+
+그리고 나서  대기 이벤트 모니터링 하는 터미널2창에서 대기 이벤트를 확인하시오 !
+
+       366 enq: SV -  contention
+       373 enq: SV -  contention
+       257 enq: SV -  contention
+       139 enq: SV -  contention
+       140 enq: SV -  contention
+
+SV enqueue 가 발생한다는 것은 sequence 의 옵션 설정중   order flag 를  noorder 가 
+아니라 order 로 했을때 발생하는 대기 이벤트입니다.  1번 노드와 2번 노드가 서로
+시퀀스 번호관련해서 통신하면서 대기하고 있다는 뜻입니다. 
+
+처방전 :  시퀀스의 파라미터 속성을  noorder 로 변경해서 해결합니다. 
+
+문제1.  다시 한번 부하를 일으키는데 이번에는 부하 일으키기 전에 사진한번 찍고
+          부하 일으킨 후에 사진한번 찍고서  ADDM 레포트를 떠서 오라클이 권장하는
+          처방전을 출력하시오 !
+
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+SQL#1> @exec
+
+ 그리고 한 5분 ~ 10 분 정도 후에 다시 사진을 찍습니다. 
+
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+SQL#1> @?/rdbms/admin/addmrpt.sql 
+
+ Action
+      Investigate the cause for high "enq: SV -  contention" waits in Service
+      "SYS$USERS"
+
+처방전:  SV  enqueue 가 발생하면서 database 가 느리다면  시퀀스의 속성을
+           order 에서 noorder 로 변경을 해주면 됩니다. 
+
+방법: 
+
+SQL#1> alter   sequence  seq_sq_enqueue   noorder ;
+
+SQL#1>  select  sequence_name,  cache_size, order_flag
+               from   user_sequences;
+ 
+   SEQ_SQ_ENQUEUE                         10     N
