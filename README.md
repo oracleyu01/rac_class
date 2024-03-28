@@ -73,16 +73,16 @@
 - **38. RAC 튜닝 중 interconnect  traffic 튜닝**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C38.%20%20RAC%20%ED%8A%9C%EB%8B%9D%20%EC%A4%91%20interconnect%20%20traffic%20%ED%8A%9C%EB%8B%9D.txt)
 - **39. global  동기화 작업에 대한 경합 튜닝의 큰 개요**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C39.%20%20global%20%20%EB%8F%99%EA%B8%B0%ED%99%94%20%EC%9E%91%EC%97%85%EC%97%90%20%EB%8C%80%ED%95%9C%20%EA%B2%BD%ED%95%A9%20%ED%8A%9C%EB%8B%9D%EC%9D%98%20%ED%81%B0%20%EA%B0%9C%EC%9A%94.txt)
 - **40. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C40.%20%20RAC%20%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EC%9B%90%EB%A6%AC%EC%9D%B8%20cache%20fusion%20%EC%97%90%20%EB%8C%80%ED%95%9C%20%EC%84%A4%EB%AA%85.txt)
-- **41. RAC  환경에서 대기 이벤트**: 📄[노트]
-- **42. 오라클에 부하를 주고 원인 파악하는 시물레이션 환경 구현**: 📄[노트]
-- **43. buffer buffer busy 대기 이벤트를 일으키고 해결하기**: 📄[노트]
-- **44. gc buffer  busy  대기 이벤트 일으키고 해결하기**: 📄[노트]
-- **45. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
-- **46. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
-- **47. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
-- **48. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
-- **49. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
-- **50. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **41. RAC 환경에서 대기 이벤트**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C41.%20RAC%20%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%8C%80%EA%B8%B0%20%EC%9D%B4%EB%B2%A4%ED%8A%B8.txt)
+- **42. 오라클에 부하를 주고 원인 파악하는 시물레이션 환경 구현**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C42.%20%EC%98%A4%EB%9D%BC%ED%81%B4%EC%97%90%20%EB%B6%80%ED%95%98%EB%A5%BC%20%EC%A3%BC%EA%B3%A0%20%EC%9B%90%EC%9D%B8%20%ED%8C%8C%EC%95%85%ED%95%98%EB%8A%94%20%EC%8B%9C%EB%AC%BC%EB%A0%88%EC%9D%B4%EC%85%98%20%ED%99%98%EA%B2%BD%20%EA%B5%AC%ED%98%84.txt)
+- **43. buffer buffer busy 대기 이벤트를 일으키고 해결하기**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C43.%20%20buffer%20buffer%20busy%20%EB%8C%80%EA%B8%B0%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%EB%A5%BC%20%EC%9D%BC%EC%9C%BC%ED%82%A4%EA%B3%A0%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0.txt)
+- **44. gc buffer  busy  대기 이벤트 일으키고 해결하기**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C44.%20%20gc%20buffer%20%20busy%20%20%EB%8C%80%EA%B8%B0%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%9D%BC%EC%9C%BC%ED%82%A4%EA%B3%A0%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0.txt)
+- **45. RAC 환경에서 락(Lock) 에 관련한 성능저하시 해결방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C45.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%9D%BD(Lock)%20%EC%97%90%20%EA%B4%80%EB%A0%A8%ED%95%9C%20%EC%84%B1%EB%8A%A5%EC%A0%80%ED%95%98%EC%8B%9C%20%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95.txt)
+- **46. RAC 환경에서 시퀀스 파라미터 ORDER 와 NOORDER**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C46.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EC%8B%9C%ED%80%80%EC%8A%A4%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20ORDER%20%EC%99%80%20NOORDER.txt)
+- **47. RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법1**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C47.RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20SQ%20%20enqueue%20%EC%84%B1%EB%8A%A5%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%951.txt)
+- **48. RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법2**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C48.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20SQ%20%20enqueue%20%EC%84%B1%EB%8A%A5%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%952.txt)
+- **49. RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법3**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C49.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20SQ%20%20enqueue%20%EC%84%B1%EB%8A%A5%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%953.txt)
+- **50. RAC 환경에서 많이 발생하는 HW enqueue 의 원인과 해결방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C50.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A7%8E%EC%9D%B4%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20HW%20enqueue%20%EC%9D%98%20%EC%9B%90%EC%9D%B8%EA%B3%BC%20%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95.txt)
 
 
 
