@@ -73,6 +73,19 @@
 - **38. RAC 튜닝 중 interconnect  traffic 튜닝**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C38.%20%20RAC%20%ED%8A%9C%EB%8B%9D%20%EC%A4%91%20interconnect%20%20traffic%20%ED%8A%9C%EB%8B%9D.txt)
 - **39. global  동기화 작업에 대한 경합 튜닝의 큰 개요**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C39.%20%20global%20%20%EB%8F%99%EA%B8%B0%ED%99%94%20%EC%9E%91%EC%97%85%EC%97%90%20%EB%8C%80%ED%95%9C%20%EA%B2%BD%ED%95%A9%20%ED%8A%9C%EB%8B%9D%EC%9D%98%20%ED%81%B0%20%EA%B0%9C%EC%9A%94.txt)
 - **40. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C40.%20%20RAC%20%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EC%9B%90%EB%A6%AC%EC%9D%B8%20cache%20fusion%20%EC%97%90%20%EB%8C%80%ED%95%9C%20%EC%84%A4%EB%AA%85.txt)
+- **41. RAC  환경에서 대기 이벤트**: 📄[노트]
+- **42. 오라클에 부하를 주고 원인 파악하는 시물레이션 환경 구현**: 📄[노트]
+- **43. buffer buffer busy 대기 이벤트를 일으키고 해결하기**: 📄[노트]
+- **44. gc buffer  busy  대기 이벤트 일으키고 해결하기**: 📄[노트]
+- **45. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **46. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **47. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **48. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **49. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+- **50. RAC 의 핵심 원리인 cache fusion 에 대한 설명**: 📄[노트]
+
+
+
    &nbsp;
   
   &nbsp;
