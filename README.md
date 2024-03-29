@@ -85,12 +85,12 @@
 - **50. RAC 환경에서 많이 발생하는 HW enqueue 의 원인과 해결방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C50.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A7%8E%EC%9D%B4%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20HW%20enqueue%20%EC%9D%98%20%EC%9B%90%EC%9D%B8%EA%B3%BC%20%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95.txt)
 
 
+&nbsp;  
 
-   &nbsp;
-  
-  &nbsp;
-  
-  &nbsp;
+위의 수업 내용은 곧 [이지업 클래스](https://easyupclass.e-itwill.com/main/index.jsp) 온라인 강의에서 만나시게됩니다.
+
+&nbsp;  
+
  
 ### ⚡ 오라클을 처음부터 배우시는 분들을 위해 SQL과 SQL튜닝 강의를 소개합니다.
 
