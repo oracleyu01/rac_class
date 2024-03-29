@@ -4,8 +4,6 @@
 
 초보자도 쉽게 배울 수 있도록 오라클 RAC 수업 내용을 정리하였습니다.
 
-아래의 수업 내용은 곧 [이지업 클래스](https://easyupclass.e-itwill.com/main/index.jsp) 온라인 강의에서 만나시게됩니다.
-
 <img src="https://github.com/oracleyu01/rac_class/blob/main/001.png?raw=true" width="600" height="400">
 
 &nbsp;
@@ -89,7 +87,7 @@
 
 &nbsp;  
 
-위의 수업 내용은 곧 [이지업 클래스](https://easyupclass.e-itwill.com/main/index.jsp) 온라인 강의에서 만나시게됩니다.
+위의 수업 내용은  [이지업 클래스](https://easyupclass.e-itwill.com/main/index.jsp) 온라인 강의에서 곧 만나시게 되실수 있습니다.
 
 &nbsp;  
 
