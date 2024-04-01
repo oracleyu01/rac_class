@@ -1,6 +1,5 @@
 
-▣ 예제57.  RAC 환경 튜닝팁3. rac 환경에서는 single instance 보다 buffer cache 를
-             더 크게 설정해야합니다. 
+▣ 예제57.  RAC 환경 튜닝팁3. rac 환경에서는 single instance 보다 buffer cache 를 더 크게 설정해야합니다. 
 
 면접질문:  왜 rac 환경에서는 single instance 일때 보다 buffer cache 가 더 커야하나요?
 
