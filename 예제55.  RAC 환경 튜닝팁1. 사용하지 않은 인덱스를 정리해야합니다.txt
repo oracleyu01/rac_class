@@ -1,0 +1,60 @@
+
+▣ 예제55.  RAC 환경 튜닝팁1. 사용하지 않은 인덱스를 정리해야합니다. 
+
+  인덱스 불필요하게 많으면 테이블에 데이터 입력할 때 속도가 느려집니다.
+
+ 왜 사용하지 않은 인덱스가 많이 생겼는가 ?  
+
+  답변:   개발할 때 개발자들이 DBA 에게 인덱스 생성 요청을 많이 합니다.
+           생성 요청마다 그대로 인덱스를 생성하게 되면 불필요하게 인덱스가
+           많아집니다.   DBA 가 잘 선별해서 필요한 인덱스를 생성해줘야합니다. 
+
+           DBA 가 많이 선별해서 인덱스를 생성했는데도 불구하고 사용하지 않은
+           인덱스들이 생깁니다.  이럴때 다음과 같이 정리하면 됩니다. 
+
+■ 실습
+
+#1.scott 유져로 접속해서 demobld.sql 스크립트를 수행합니다.
+
+SQL#1> connect scott/tiger
+SQL#1> @demobld.sql
+
+#2. 사원 테이블에 월급에 인덱스를 생성합니다. 
+
+SQL#1> create  index  emp_sal  on  emp(sal);
+
+#3. 인덱스를 모니터링하게 합니다. 
+
+SQL#1> alter  index  emp_sal  monitoring  usage; 
+
+SQL#1> select  index_name, used
+             from   v$object_usage; 
+
+#4. 사원 테이블의 월급을 조회해서 emp_sal 인덱스를 사용합니다. 
+
+SQL#1> select  /*+ index(emp emp_sal) */  ename, sal
+              from  emp
+              where  sal = 3000;
+
+#5. 인덱스를 사용했는지 확인합니다. 
+
+SQL#1> select  index_name, used
+             from   v$object_usage; 
+
+※ dba 들이 꼭 물어보는 질문 ?  인덱스 모니터링이 db 에 부하를 주지는 않나요?
+
+답변:  부하 없으니 걱정하지 말고 모니터링 사용하세요.
+
+#6.  emp_sal 인덱스의 모니터링을 끄시오 !
+
+SQL#1> alter  index  emp_sal   nomonitoring  usage;  
+
+SQL#1> select  index_name, monitoring
+             from   v$object_usage; 
+
+설명:  1~2달 인덱스 모니터링을 했는데 한번도 사용하지 않은 인덱스가 있다면
+         drop 을 해도 됩니다. 
+
+문제1.  사원 테이블에 job 에 인덱스를 생성하고  job 인덱스 사용여부를 확인하기
+         위해 모니터링을 거시오. 그리고 emp_job 인덱스를 사용하고 사용했는지
+         확인하시오 ~

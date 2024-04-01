@@ -1,0 +1,75 @@
+
+▣ 예제51.  US  enqueue 가 뭔지 알고 있어야해요 !
+
+ US enqueue 란 ?  Undo Segment  enqueue 라는 뜻입니다. 
+                         Undo Segment 를 여러 세션들이 동시에 할당받아서
+                        사용하려고 할 때 경합이 발생하게 되는데 그 때 
+                        undo segment 를 보호하기 위해서 사용하는 락입니다.
+
+- undo segment 의 역활 ?   rollback 할 데이터를 저장하는 공간 
+                                     읽기 일관성을 보장하기 위한 공간 
+
+                  A     session                         B   session
+
+ 1.   update   emp
+        set  sal = 0
+        where  ename='KING';               2.   select  ename, sal
+                                                              from  emp
+                                                             where  ename='KING';
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/253
+
+- undo segment 가 현재 몇개가 떠 있는지 확인하시오 !
+
+select  *
+  from v$rollname;
+
+지금은 19개만 나오지만 DML 작업이 활발히 발생하면 이 갯수가 자동으로
+늘어납니다.  무한히 늘어날 수 는 없고 undo tablespace 의 사이즈에 따라
+허용하는 한도 내에서 늘어날 수 있으므로 지금 활성화된 undo segment 들을
+여러 세션들이 공유해서 사용하는것입니다.
+하나의 undo segment 를 여러개의 trasaction 이 같이 사용할 수 있는것입니다.
+그래서 그 transaction 은 끝날때까지(commit할때) 그 undo segment 만 해야합니다. 
+
+동시에 여러 transactoin 들이 하나의 undo segment 에 경합을 벌이지 않게
+하기 위해서 us enqueue 로 undo segment 를 보호하는것입니다.
+us enqueue 를 잡은 세션만 undo segment 를 사용할 수 있게 합니다.
+
+그런데 rac 환경에서  us  enqueue 가 더 잘 발생합니다. 
+왜 더 많이 발생하냐면  인스턴스가 1개가 아니라 여러개이기 때문에
+더 많은 세션이 오라클에 접속해서 transaction 을 발생 시킬 수 있기 
+때문입니다.
+
+해결방법?   1.  us enqueue 의 홀더 세션을 kill 시켜서 락을 해제합니다.
+                2.  undo_management 가 auto 로 되어있는지 확인
+                3.  undo_retention 의 시간을 적절하게 조정
+                4.  undo_tablespace 의 크기를 좀더 늘려줌
+
+문제1.  undo_management 가 어떻게 셋팅되어 있는지 1번 노드에서 확인합니다.
+
+
+
+문제2. undo_retention 의 시간이 몇으로 셋팅되어 있는지 확인합니다.
+
+
+문제3.  900 초가 확실히 보장이 되는지 확인하시오 !
+
+   select   tablespace_name,  retention
+     from   dba_tablespaces
+     where  tablespace_name  like  '%UNDO%';
+
+설명: guarantee 로 셋팅되어 있으면 us enqueue 가 발생할 가능성이 높습니다.
+
+문제4. undo  tablespace 의 사이즈를 더 늘리시오 !
+
+#1. default  undo  tablespace 가 뭔지 확인합니다.
+
+SQL#1>  show  parameter  undo_tablespace
+
+#2. default  undo tablespace 의 사이즈를 늘립니다. 
+
+SQL#1> alter   tablespace   undotbs1   add   datafile   size 10m;
+
+문제5.  2번 인스턴스의 default  undo tablespace 가 뭔지 확인하고 
+          사이즈를 10m 더 늘리시오 !
+

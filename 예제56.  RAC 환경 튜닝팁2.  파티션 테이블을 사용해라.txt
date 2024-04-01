@@ -1,0 +1,99 @@
+
+▣ 예제56.  RAC 환경 튜닝팁2.  파티션 테이블을 사용해라~
+
+  RAC 환경에서 파티션 테이블을 사용하게 되면 파티션 와이즈 조인을 
+  할 수 있습니다. 
+
+  파티션 와이즈 조인이란 ? 파티션끼리 조인하는것을 말합니다. 
+
+ ■ 일반 힙(heap) 테이블을 서로 조인했을때의 원리 
+
+   select  e.ename, d.loc
+     from  emp  e,  dept   d
+     where  e.deptno = d.deptno ;
+
+
+ ■ 파티션 테이블로 파티션 와이즈 조인을 했을때의 원리
+
+   select  e.ename, d.loc
+     from  emp_partition  e,  dept_partition   d
+     where  e.deptno = d.deptno ;
+
+    파티션 와이즈 조인은 파티션 끼리 조인하는것입니다.
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/262
+
+ 그럼 RAC 환경에서 파티션 와이즈 조인을 하게 되면 성능상 유리한 이유가 ?
+
+  파티션 끼리 조인하므로 인터커넥트를 통해서 통신을 하는양을 줄일 수 있습니다. 
+
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/263
+
+만약 일반 Heap 테이블로 구성했다면 다음가 같이 인터커넥트를 통한 통신이
+불가피 합니다.
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/264
+
+■ 실습 
+
+#1.  emp 테이블을 부서번호를 기준으로 파티션 테이블로 구성합니다.
+
+ create  table   emp_partition
+   (	empno number(4,0) , 
+	ename varchar2(10), 
+	job varchar2(9), 
+	mgr number(4,0), 
+	hiredate date, 
+	sal number(7,2), 
+	comm number(7,2), 
+	deptno number(2,0)
+   )  
+     partition  by  range(deptno)
+   ( partition   p_deptno_10  values  less  than(20),
+     partition   p_deptno_20  values  less  than(30),
+     partition   p_deptno_30  values  less  than(40),
+     partition   p_max    values  less  than(maxvalue)  );
+
+insert  into  emp_partition
+  select  *
+   from  emp;
+
+select * from emp_partition;
+
+#2.  dept 테이블을 부서번호를 기준으로 파티션 테이블로 구성합니다.
+
+ create  table  dept_partition
+ ( deptno   number(10),
+   dname   varchar2(14),
+   loc        varchar2(13) 
+ )
+    partition  by  range(deptno)
+  ( partition    p_deptno_10  values  less  than(20),
+     partition   p_deptno_20  values  less  than(30),
+     partition   p_deptno_30  values  less  than(40),
+     partition   p_max    values  less  than(maxvalue)  );
+
+insert  into  dept_partition
+ select  *
+  from dept; 
+ 
+select  * from dept_partition;
+
+#3.  emp_partition 과 dept_partition 테이블에 대해서 통계정보를 수집합니다.
+
+exec  dbms_stats.gather_table_stats('scott','emp_partition');
+exec  dbms_stats.gather_table_stats('scott','dept_partition');
+
+#4.  emp 와 dept 테이블을 파티션 와이즈 조인 합니다. 
+                                                           
+explain  plan for 
+ select  e.ename, d.loc
+  from emp_partition   e,  dept_partition   d
+  where  e.deptno = d.deptno ; 
+
+select  * from  table(dbms_xplan.display);
+
+설명: 실행계획을 보면 파티션 와이즈 조인을 했습니다.  
+       실행계획에 key 가 출력되는데 key 기반으로 필요한 파티션에 대해서만 접급해서
+       파티션 와이즈 조인을 했습니다. 

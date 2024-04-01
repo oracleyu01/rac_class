@@ -1,0 +1,62 @@
+
+▣ 예제57.  RAC 환경 튜닝팁3. rac 환경에서는 single instance 보다 buffer cache 를
+             더 크게 설정해야합니다. 
+
+면접질문:  왜 rac 환경에서는 single instance 일때 보다 buffer cache 가 더 커야하나요?
+
+답변 :   내 노드의 인스턴스로 data file 에 올릴 데이터 블럭도 올려야하지만
+          상대편 노드에서 전송받을 데이터 블럭도 저장해야하기 때문에
+          싱글 인스턴스 일때보다 1.5 배 더 크게 설정해줘야합니다. 
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/266
+
+■ 실습
+
+#1.  1번 노드와 2번 노드에 현재 buffer cache 의 크기를 확인하시오 !
+
+PROMPT *** CURRENT parameter settings ***
+col name format a12
+col VALUE format a8
+SHOW parameter sga_
+PROMPT
+PROMPT *** SGA Dynamic Component SIZE Information***
+col component format a22
+col current_size format a15
+col min_size format a15
+
+SELECT component,current_size/1048576||'M' current_size,
+       min_size/1048576||'M' min_size
+FROM v$sga_dynamic_components
+WHERE component IN ('shared pool','large pool',
+                   'java pool','DEFAULT buffer cache');
+
+col name format a20
+col VALUE format a20
+PROMPT *** CURRENT parameter settings IN V$PARAMETER *** 
+
+SELECT name, VALUE, isdefault 
+FROM v$parameter
+WHERE name IN ('shared_pool_size','large_pool_size',
+               'java_pool_size', 'db_cache_size'); 
+
+SQL#1> @sga.sql
+SQL#2> @sga.sql
+
+#2.   db buffer cache 사이즈를 700m 늘리시오 !
+
+SQL#1> alter  system  set  db_cache_size = 700m  scope=spfile  sid='*';
+
+SQL#1> shutdown immediate
+SQL#1> startup
+
+SQL#1> @sga
+
+#3. 2번 인스턴스는 그냥 내렸다 올립니다. 
+
+SQL#2> shutdown immediate
+SQL#2> startup
+SQL#2> @sga
+
+오늘의 마지막 문제.  다시 양쪽 노드의 buffer  cache  size 를 600m 로 변경하시오 !
+                           변경된 화면을 캡쳐해서 올리고 검사 받으시면 됩니다.
+

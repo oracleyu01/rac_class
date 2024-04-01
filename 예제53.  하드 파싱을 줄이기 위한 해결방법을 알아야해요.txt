@@ -1,0 +1,100 @@
+
+▣ 예제53.  하드 파싱을 줄이기 위한 해결방법을 알아야해요.
+
+  하드 파싱이 shared  pool  latch 경합의 원인이 되고 있습니다.
+
+  하드 파싱(hard parsing) 을 줄이기 위한 방법 2가지 ?
+
+  1.  literal  SQL 을 바인드 변수로 변경합니다.
+
+  2.  cursor_sharing 파라미터는 force 로 지정하면 자동으로 전부 litersql 이
+      바인드 변수로 변경됩니다.
+
+■ 실습
+
+#1.  scott 유져에서  아래의 2개의 SQL 을 실행하고 공유풀에 존재하는지 확인합니다.
+
+SQL#1>  connect  scott/tiger
+
+SQL#1> select  empno, ename, sal from emp where empno = 7788; 
+SQL#1> select  empno, ename, sal from emp where empno = 7902; 
+
+SQL#1> select  sql_text  from  v$sql  where  sql_text  like  '%select  empno%';
+
+설명: 위의 2개의 sql이 공유가 안되어서 둘다 보입니다. 만약 공유가 되어지면
+       1개만 보입니다. 
+
+#2.  cursor_sharing 을 force 로 변경합니다.
+
+SQL#1> show  parameter  cursor_sharing 
+
+cursor_sharing                    EXACT
+
+※ 값 설명 
+1. exact :   리터럴 SQL을 그냥 그대로 리터럴 SQL로 사용하겠다.
+2. force :   리터럴 SQL을 바인드 변수로 변경하겠다. 
+3. similar  :  데이터의 선택도에 따라 리터럴 SQL을 바인드 변수로 변경할 수 도 있고
+                변경안할 수 있습니다.( 권장하는 파라미터는 아닙니다.)
+
+SQL#1> alter  system  set  cursor_sharing=force  scope=both  sid='*';
+
+
+#3.  양쪽 인스턴스를 둘다 내렸다 올립니다.
+
+
+#4.  다시 아래의 2개의 SQL 을 실행합니다.
+
+SQL#1> show  parameter  cursor_sharing
+
+SQL#1> connect  scott/tiger
+
+SQL#1> select empno, ename from emp where empno = 7788;
+SQL#1> select empno, ename from emp where empno = 7902;
+
+#5.  공유풀에 2개의 SQL이 어떻게 되어 들어있는지 확인합니다. 
+
+SQL#1> select  sql_text  
+             from  v$sql
+             where  sql_text  like  '%select empno%';
+
+select empno, ename from emp where empno = :"SYS_B_0"
+
+#6. 리터럴 SQL을 10000번을 수행해서 하드 파싱을 유발하는 PL/SQL 코드를 수행하시오
+
+SQL> DECLARE
+ TYPE rc IS REF cursor;
+ l_rc rc;
+ l_dummy all_objects.object_name%TYPE;
+ l_start NUMBER DEFAULT dbms_utility.get_time;
+BEGIN
+ FOR i IN 1 .. 10000
+ loop
+  OPEN l_rc FOR
+  'select object_name from all_objects where object_id = ' || i;
+  fetch l_rc INTO l_dummy;
+  close l_rc;
+ END loop;
+ dbms_output.put_line ( round( (dbms_utility.get_time - l_start)/100, 2) || 'seconds');
+END;
+/
+
+SQL#1> select  sql_text  
+            from v$sql
+            where  sql_text   like  '%select object_name%';
+
+select object_name from all_objects where object_id = :"SYS_B_0"
+
+※ cursor_sharing 을 force 로 지정했을 때 부작용도 알고 있어야합니다.
+
+문제1.  다시 cursor_sharing 을 exact 으로 변경하시오 !
+
+SQL#1> alter  system  set  cursor_sharing=exact  scope=both  sid='*';
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+SQL#1> startup
+SQL#2> startup
+
+SQL#1> show parameter cursor_sharing
+

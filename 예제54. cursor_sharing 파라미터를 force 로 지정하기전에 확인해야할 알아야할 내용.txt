@@ -1,0 +1,78 @@
+▣ 예제54. cursor_sharing 파라미터를 force 로 지정하기전에 확인해야할 알아야할 내용
+
+- emp99 테이블을 총 10000건의 데이터가 있고 ename 에 인덱스가 있는 상황입니다.
+- 10000  건중에 ename 이 scott1은 1건이 있고 scott99 는 9999건이 있습니다. 
+
+select  count(*)  from emp99  where ename='scott1';
+
+select  count(*)  from emp99  where ename='scott99';
+
+scott1 이 검색될때는 index range scan 이라는 실행계획이 바람직하며
+scott99 가 검색될 때는 full table scan 이라는 실행계획이 바람직합니다. 
+그런데 만약 다음과 같이 바인드 변수로 변경이 된다면 실행계획은 딱 1개의
+실행계획으로 고정이 되어버립니다. 
+
+select  count(*)  from emp99  where ename= :v_empno; 
+
+위의 SQL을 파싱할 때 만들었던 실행계획 1개로 계속해서 유지가 되어집니다.
+만약 index range scan 이라는 실행계획으로 유지된다면 scott1 을 검색할때는
+속도가 빠르지만 scott99 가 검색될때는 속도가 느려집니다. 
+
+반대로 full table scan 이라는 실행계획으로 유지된다면 scott99 를 검색할 때는
+속도가 빠르지만 scott1 을 검색할 때는 속도가 느려집니다. 
+
+바인드 변수로 자동으로 변경이되면 위와 같은 SQL은 문제를 일으킵니다. 
+위와 같은 경우에 오라클에서 권장하는 해결방법이 있습니다. 
+
+문제1. 다시 cursor_sharing 을 force 로 변경하고 양쪽 인스턴스를 내렸다 올리시오 !
+
+SQL#1> alter  system  set  cursor_sharing=force  scope=both  sid='*';
+
+SQL#1> shutdown immediate
+SQL#2> shutdown immediate
+
+SQL#1> startup
+SQL#2> startup
+
+SQL#1> show parameter cursor_sharing
+
+cursor_sharing 이 force 라는 애기는 리터럴 SQL을 바인드 변수로 자동으로 변경하겠다
+는것입니다.  
+
+그런데 특별하게 emp99 와 같은 테이블에 대해서는 바인드 변수로 변경하지 말라고
+하는 힌트가 있습니다.  그게 바로 /*+ cursor_sharing_exact  */ 입니다. 
+
+■ 실습 
+
+#1. cursor_sharing 파라미터 값을 확인합니다.
+
+SQL#1>  show  parameter  cursor_sharing 
+
+#2. 아래의 SQL을 실행합니다.
+
+SQL#1> connect  scott/tiger
+SQL#1> select ename, sal from emp where empno = 7788;
+
+#3. 2번에서 수행한 SQL을 공유풀에서 검색합니다.
+
+SQL#1> select  sql_text  from v$sql where sql_text  like '%select ename%';
+
+select ename, sal from emp where empno = :"SYS_B_0"
+
+#4. cursor_sharing_exact 힌트를 사용해서 SQL을 실행합니다.
+
+SQL#1> select /*+ cursor_sharing_exact */ ename, sal
+             from emp
+             where empno = 7902;
+
+설명:  위의 힌트를 쓴 SQL 은 바인드 변수로 변환하지 않습니다. 
+        그냥 리터럴 SQL로 수행합니다. 
+
+#5. 4번에서 수행한 SQL을 공유풀에서 검색합니다. 
+
+SQL#1>  select sql_text  from  v$sql  where  sql_text  like '%cursor_sharing_exact%';
+
+ select /*+ cursor_sharing_exact */ ename, sal  from emp
+    where empno = 7902  <--- 오라클이 바인드 변수로 변경안했고 리터럴 SQL 
+                                        그대로 보입니다. 
+

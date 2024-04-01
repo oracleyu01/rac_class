@@ -1,0 +1,175 @@
+
+▣ 예제52.   shared pool 관련한 latch 를 알아야 해요 
+
+ 오라클 메모리 성능에 이슈 2가지 ?  1. enqueue
+                                                2. latch 
+
+https://cafe.daum.net/oracleoracle/SoJX/255  의 ppt 의 3번 그림 
+
+https://cafe.daum.net/oracleoracle/SoJX/255  의 ppt 의 6번 그림 
+
+latch 를 획득해야지만 SGA 영역 메모리를 사용할 수 있게 되는것입니다.
+
+면접질문:   latch 가 뭔지 설명해주기겠어요?
+
+답변 : 
+ 오라클 메모리를 보호하가 위한 락의 종류중에 하나이고 가벼운 lock 입니다
+ 오라클 메모리를 사용하려면 반드시 latch 를 획득해야하고 latch 를 획득하지
+ 못하면 대기 리스트에 들어가서 대기하게 됩니다. 
+
+- latch 를 획득해야하는 경우 ?   
+
+ 1. shared  pool 의 경우 ?   SQL을 파싱하려고 
+
+ 2. db buffer  cache 의 경우 ?   data file 에서 data 블럭을 메모리에 올릴려고
+
+* 불필요한 파싱을 최소하는 방법 이론 설명 
+
+ select  ename, sal
+   from  emp
+   where  ename='SCOTT';  
+
+1. Parsing   ---> 문법검사, 의미검사
+2. execute  --->  데이터 찾는 과정 
+3. fetch     --->  데이터 전달 
+
+그림: https://cafe.daum.net/oracleoracle/SoJX/256
+
+■ 실습  " 불필요한 파싱을 최소하는 방법 "
+
+#1. 사진을 찍습니다.
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+#2. 하드 파싱을 일으키는 부하를 일으킵니다.
+
+SQL#1> DECLARE
+ TYPE rc IS REF cursor;
+ l_rc rc;
+ l_dummy all_objects.object_name%TYPE;
+ l_start NUMBER DEFAULT dbms_utility.get_time;
+BEGIN
+ FOR i IN 1 .. 10000
+ loop
+  OPEN l_rc FOR
+  'select object_name from all_objects where object_id = ' || i;
+  fetch l_rc INTO l_dummy;
+  close l_rc;
+ END loop;
+ dbms_output.put_line ( round( (dbms_utility.get_time - l_start)/100, 2) || 'seconds');
+END;
+/
+
+또 다른 터미널 창을 열어서 top 도 수행하고 다음과 같이 대기 이벤트도 조회합니다. 
+
+$ top    
+
+cpu 를 과도하게 사용하는 프로세서가 하나 있습니다. 
+
+SQL#1> @event
+
+       SID EVENT
+---------- ----------------------------------------------------------------
+        21 jobq slave wait
+       142 jobq slave wait
+        17 latch: shared pool
+
+SQL#1>  select   sql_text
+              from  v$sql
+             where  sql_text   like  'select object_name%';
+
+설명:  공유 풀안에 공유 되지 않은 sql이 가득차 있습니다.  
+        공유가 안되었다는것은 다시 파싱했다는 뜻입니다. 
+        파싱을 하기 위해서 cpu 를 많이 소모했다는것입니다. 
+        cpu 를 100% 가까이 사용하는 세션이 서버에 있으면 엄청 느려집니다. 
+        그 원인을 찾아서 해결해야합니다. 
+
+#3. 사진을 찍습니다.
+
+SQL#1>  exec  dbms_workload_repository.create_snapshot; 
+
+#4. awr  report 를 생성합니다.
+
+SQL#1> @?/rdbms/admin/awrrpt.sql
+
+#5. addm  report 를 생성합니다.
+
+SQL#1> @?/rdbms/admin/addmrpt.sql
+
+설명 :https://cafe.daum.net/oracleoracle/SoJX/259
+
+ADDM 레포트에 추천 해결방법은  SQL이 공유가 될 수 있도록
+Literal  SQL 을 Bind  variable 로 변경하라는 것입니다.
+
+1. Literal  SQL 의 예:
+
+select  empno, ename, sal  from  emp  where empno = 7788;
+select  empno, ename, sal  from  emp  where empno = 7902;
+select  empno, ename, sal  from  emp  where empno = 7566;
+
+뒤에 사원번호만 틀려도 오라클은 다른 SQL로 인식해서 다시 파싱합니다. 
+그래서 튜닝방법이 바인드 변수로 변경해줘야합니다.
+
+select  empno, ename, sal  from  emp  where empno = :v_empno; 
+
+#6. 사진을 찍습니다.
+
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+#7. 공유가 되는 튜닝된 부하를 일으킵니다.
+
+SQL#1> DECLARE
+ TYPE rc IS REF cursor;
+ l_rc rc;
+ l_dummy all_objects.object_name%TYPE;
+ l_start NUMBER DEFAULT dbms_utility.get_time;
+BEGIN
+ FOR i IN 1 .. 10000
+ loop
+  OPEN l_rc FOR
+  'select object_name from all_objects where object_id = :x'  USING   i;
+  fetch l_rc INTO l_dummy;
+  close l_rc;
+ END loop;
+ dbms_output.put_line ( round( (dbms_utility.get_time - l_start)/100, 2) || 'seconds');
+END;
+/
+
+3분이 넘게 걸렸던  pl/sql 이 0.25 초만에 끝났습니다. 
+
+#8. 사진을 찍습니다.
+
+SQL#1> exec dbms_workload_repository.create_snapshot;
+
+#9. AWR 비교 레포트를 생성합니다. 
+
+SQL#1> @?/rdbms/admin/awrddrpt.sql 
+
+Enter value for report_type: html
+
+Enter value for begin_snap: 106
+Enter value for end_snap: 107
+
+Enter value for begin_snap2: 108
+Enter value for end_snap2: 109
+
+Enter value for report_name: report45.html
+
+awr  비교 레포트를 보니  CPU time 이 튜닝전과 후과 차이나게 줄어들었습니다.
+
+ADDM 레포트가 권장하는 해결방법 2가지 ?  
+
+  1.  PL/SQL 로직에서 literSQL 을 bind 변수로 변경해라 ~
+  2.  cursor_sharing 을 force 로 변경하면 알아서 모든 literal SQL을 오라클이
+      bind 변수로 자동으로 변경해줍니다.
+
+점심시간 문제.   다음의 Literal SQL을 scott 유져에서 수행하고 공유풀에 올라가져
+                      있는지 확인하시오 !
+
+ select  empno, ename, sal  from  emp  where  empno = 7788;
+
+ select  empno, ename, sal  from  emp  where  empno = 7902;
+
+ select  sql_text
+   from v$sql
+   where  sql_text  like '%select  empno%';
+
