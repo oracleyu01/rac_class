@@ -83,13 +83,13 @@
 - **48. RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법2**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C48.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20SQ%20%20enqueue%20%EC%84%B1%EB%8A%A5%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%952.txt)
 - **49. RAC 환경에서  발생하는 SQ  enqueue 성능 문제 해결하는 방법3**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C49.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20SQ%20%20enqueue%20%EC%84%B1%EB%8A%A5%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%953.txt)
 - **50. RAC 환경에서 많이 발생하는 HW enqueue 의 원인과 해결방법**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C50.%20%20RAC%20%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EB%A7%8E%EC%9D%B4%20%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94%20HW%20enqueue%20%EC%9D%98%20%EC%9B%90%EC%9D%B8%EA%B3%BC%20%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95.txt)
-- **51. US  enqueue 가 뭔지 알고 있어야해요**: 📄[노트]  
-- **52. shared pool 관련한 latch 를 알아야 해요**: 📄[노트]
-- **53. 하드 파싱을 줄이기 위한 해결방법을 알아야해요**: 📄[노트]
-- **54. cursor_sharing 파라미터를 force 로 지정하기전에 확인해야할 알아야할 내용**: 📄[노트]
-- **55. RAC 환경 튜닝팁1. 사용하지 않은 인덱스를 정리해야합니다**: 📄[노트]
-- **56. RAC 환경 튜닝팁2. 파티션 테이블을 사용해야합니다**: 📄[노트]
-- **57. RAC 환경 튜닝팁3. 버퍼 캐쉬를 1.5배 크게 설정해야합니다.**: 📄[노트]
+- **51. US  enqueue 가 뭔지 알고 있어야해요**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C51.%20%20US%20%20enqueue%20%EA%B0%80%20%EB%AD%94%EC%A7%80%20%EC%95%8C%EA%B3%A0%20%EC%9E%88%EC%96%B4%EC%95%BC%ED%95%B4%EC%9A%94.txt)  
+- **52. shared pool 관련한 latch 를 알아야 해요**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C52.%20%20%20shared%20pool%20%EA%B4%80%EB%A0%A8%ED%95%9C%20latch%20%EB%A5%BC%20%EC%95%8C%EC%95%84%EC%95%BC%20%ED%95%B4%EC%9A%94.txt)  
+- **53. 하드 파싱을 줄이기 위한 해결방법을 알아야해요**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C53.%20%20%ED%95%98%EB%93%9C%20%ED%8C%8C%EC%8B%B1%EC%9D%84%20%EC%A4%84%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95%EC%9D%84%20%EC%95%8C%EC%95%84%EC%95%BC%ED%95%B4%EC%9A%94.txt)  
+- **54. cursor_sharing 파라미터를 force 로 지정하기전에 확인해야할 알아야할 내용**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C54.%20cursor_sharing%20%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EB%A5%BC%20force%20%EB%A1%9C%20%EC%A7%80%EC%A0%95%ED%95%98%EA%B8%B0%EC%A0%84%EC%97%90%20%ED%99%95%EC%9D%B8%ED%95%B4%EC%95%BC%ED%95%A0%20%EC%95%8C%EC%95%84%EC%95%BC%ED%95%A0%20%EB%82%B4%EC%9A%A9.txt)  
+- **55. RAC 환경 튜닝팁1. 사용하지 않은 인덱스를 정리해야합니다**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C55.%20%20RAC%20%ED%99%98%EA%B2%BD%20%ED%8A%9C%EB%8B%9D%ED%8C%811.%20%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EC%9D%80%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%A0%95%EB%A6%AC%ED%95%B4%EC%95%BC%ED%95%A9%EB%8B%88%EB%8B%A4.txt)  
+- **56. RAC 환경 튜닝팁2. 파티션 테이블을 사용해야합니다**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C56.%20%20RAC%20%ED%99%98%EA%B2%BD%20%ED%8A%9C%EB%8B%9D%ED%8C%812.%20%20%ED%8C%8C%ED%8B%B0%EC%85%98%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%B4%EB%9D%BC.txt)  
+- **57. RAC 환경 튜닝팁3. 버퍼 캐쉬를 1.5배 크게 설정해야합니다.**: 📄[노트](https://github.com/oracleyu01/rac_class/blob/main/%EC%98%88%EC%A0%9C57.%20%20RAC%20%ED%99%98%EA%B2%BD%20%ED%8A%9C%EB%8B%9D%ED%8C%813.txt)  
 
 
 &nbsp;  
